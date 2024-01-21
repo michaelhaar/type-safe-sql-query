@@ -14,3 +14,13 @@ test("SELECT * FROM users", () => {
   const tableName = getTableName("SELECT * FROM users");
   assertType<"users">(tableName);
 });
+
+test("select id from users", () => {
+  const tableName = getTableName("select id from users");
+  assertType<"users">(tableName);
+});
+
+test("select id, name from users", () => {
+  const tableName = getTableName("select id, name from users");
+  assertType<"users">(tableName);
+});
