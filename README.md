@@ -3,7 +3,7 @@
 - ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
 - ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
 - Most ORMs and Query Builders are just wrappers around common packages/drivers like [mysql](https://github.com/mysqljs/mysql), [mysql2](https://github.com/sidorares/node-mysql2), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/). => Unnecessary performance/runtime overhead.
-- Having a dedicated compilation step that depends on the target platform (e.g., Prisma) is quite cumbersome. => Unnecessary complexity.
+- Having a dedicated compilation step that depends on the target platform (e.g., [Prisma](https://www.prisma.io/)) is quite cumbersome. => Unnecessary complexity.
 
 
 
