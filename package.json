@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest --typecheck"
   },
   "author": "Michael Haar",
   "license": "MIT",
@@ -12,6 +12,7 @@
     "prettier": "^3.2.4"
   },
   "devDependencies": {
+    "@types/node": "^20.11.5",
     "vitest": "^1.2.1"
   }
 }
