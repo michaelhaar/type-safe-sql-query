@@ -4,11 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "author": "Michael Haar",
   "license": "MIT",
   "dependencies": {
+    "@arktype/attest": "^0.5.0",
     "prettier": "^3.2.4"
+  },
+  "devDependencies": {
+    "vitest": "^1.2.1"
   }
 }
