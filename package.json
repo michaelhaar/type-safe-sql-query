@@ -9,7 +9,6 @@
   "author": "Michael Haar",
   "license": "MIT",
   "dependencies": {
-    "@arktype/attest": "^0.5.0",
     "prettier": "^3.2.4"
   },
   "devDependencies": {
