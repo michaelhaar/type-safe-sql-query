@@ -1,4 +1,4 @@
-import { assertType, test, describe } from "vitest";
+import { assertType, test, describe, expectTypeOf } from "vitest";
 import type { ExtractTableName, InferReturnTypeFromSelect, GetTableType } from "./select";
 
 type TestTables = {
@@ -67,6 +67,11 @@ describe("GetTableType", () => {
       userId: number;
     }>(tableName);
   });
+
+  test("SELECT * FROM invalidTableName", () => {
+    const tableName = getTableType("select * from invalidTableName");
+    expectTypeOf(tableName).toMatchTypeOf<never>();
+  });
 });
 
 describe("InferReturnTypeFromSelect", () => {
@@ -97,5 +102,10 @@ describe("InferReturnTypeFromSelect", () => {
       id: number;
       postId: number;
     }>(tableName);
+  });
+
+  test("SELECT * FROM invalidTableName", () => {
+    const tableName = getReturnTypeFromSelect("select * from invalidTableName");
+    expectTypeOf(tableName).toMatchTypeOf<never>();
   });
 });
