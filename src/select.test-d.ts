@@ -58,7 +58,7 @@ describe("GetTableType", () => {
     }>(tableName);
   });
 
-  test("select * from posts", () => {
+  test("SELECT * FROM posts", () => {
     const tableName = getTableType("select * from posts");
     assertType<{
       id: number;
