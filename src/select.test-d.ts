@@ -91,8 +91,8 @@ describe("InferReturnTypeFromSelect", () => {
     }>(tableName);
   });
 
-  test("select id, postId from comments", () => {
-    const tableName = getReturnTypeFromSelect("select id, postId from comments");
+  test("SELECT id, postId FROM comments", () => {
+    const tableName = getReturnTypeFromSelect("SELECT id, postId FROM comments");
     assertType<{
       id: number;
       postId: number;
