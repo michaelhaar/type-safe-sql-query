@@ -74,6 +74,14 @@ describe("InferReturnTypeFromSelect", () => {
     return query as any;
   }
 
+  test("select * from users", () => {
+    const tableName = getReturnTypeFromSelect("select * from users");
+    assertType<{
+      id: number;
+      name: string;
+    }>(tableName);
+  });
+
   test("select id, title, userId from posts", () => {
     const tableName = getReturnTypeFromSelect("select id, title, userId from posts");
     assertType<{

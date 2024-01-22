@@ -18,9 +18,11 @@ type Split<S extends string, Delimiter extends string> = S extends `${infer T}${
   ? [T, ...Split<U, Delimiter>]
   : [S];
 
-type MapColumnsToTypes<Table, Columns> = Columns extends string
-  ? Pick<Table, Extract<keyof Table, Split<Columns, ", ">[number]>>
-  : never;
+type MapColumnsToTypes<Table, Columns> = Columns extends "*"
+  ? Table
+  : Columns extends string
+    ? Pick<Table, Extract<keyof Table, Split<Columns, ", ">[number]>>
+    : never;
 
 export type InferReturnTypeFromSelect<Query extends string, Tables> = MapColumnsToTypes<
   GetTableType<Query, Tables>,
