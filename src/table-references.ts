@@ -61,9 +61,8 @@
  * - join_specification
  */
 
-type Split<S extends string, Delimiter extends string> = S extends `${infer FirstPart}${Delimiter}${infer Rest}`
-  ? [FirstPart, ...Split<Rest, Delimiter>]
-  : [S];
+import { Split } from "./utils";
+
 type SplitBySpace<S extends string> = Split<S, " ">;
 
 type JoinKeywords = "JOIN" | "INNER" | "CROSS" | "STRAIGHT_JOIN" | "LEFT" | "RIGHT" | "OUTER" | "NATURAL";
