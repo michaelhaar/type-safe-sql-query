@@ -55,79 +55,23 @@
 /**
  * Not supported:
  * - PARTITION
+ * - alias
  * - table_subquery
  * - index_hint_list
  * - join_specification
  */
 
-type OptionalAs = "AS " | "";
-export type ParseTableFactor<TableFactor extends string> =
-  TableFactor extends `${infer TableName} ${OptionalAs}${infer _ALIAS}`
-    ? TableName
-    : TableFactor extends `${infer TableName}`
-      ? TableName
-      : never;
+type Split<S extends string, Delimiter extends string> = S extends `${infer FirstPart}${Delimiter}${infer Rest}`
+  ? [FirstPart, ...Split<Rest, Delimiter>]
+  : [S];
+type SplitBySpace<S extends string> = Split<S, " ">;
 
-// JoinedTable of type A
-// table_reference {[INNER | CROSS] JOIN | STRAIGHT_JOIN} table_factor [join_specification]
-type KeywordVariantsTypeA = `INNER JOIN` | `CROSS JOIN` | "STRAIGHT_JOIN";
-type IsJoinedTableTypeA<TableReference extends string> =
-  TableReference extends `${infer _TableReference} ${KeywordVariantsTypeA | "JOIN"} ${infer _TableFactor}`
-    ? true
-    : false;
+type JoinKeywords = "JOIN" | "INNER" | "CROSS" | "STRAIGHT_JOIN" | "LEFT" | "RIGHT" | "OUTER" | "NATURAL";
+type Filter<Arr extends any[], FilterType> = Arr extends [infer First, ...infer Rest]
+  ? First extends FilterType
+    ? Filter<Rest, FilterType>
+    : [First, ...Filter<Rest, FilterType>]
+  : [];
+type FilterKeywordsAndEmptyStrings<Arr extends any[]> = Filter<Arr, JoinKeywords | "">;
 
-export type ParseJoinedTableTypeA<JoinedTable extends string> =
-  JoinedTable extends `${infer TableReference} ${KeywordVariantsTypeA} ${infer TableFactor}`
-    ? [TableReference, TableFactor]
-    : JoinedTable extends `${infer TableReference} JOIN ${infer TableFactor}`
-      ? [TableReference, TableFactor]
-      : never;
-
-// JoinedTable of type B
-// table_reference {LEFT|RIGHT} [OUTER] JOIN table_reference join_specification
-type KeywordVariantsTypeB = "LEFT JOIN" | "LEFT OUTER JOIN" | "RIGHT JOIN" | "RIGHT OUTER JOIN";
-type IsJoinedTableTypeB<TableReference extends string> =
-  TableReference extends `${infer _TableReference} ${KeywordVariantsTypeB} ${infer _TableReference}` ? true : false;
-
-export type ParseJoinedTableTypeB<JoinedTable extends string> =
-  JoinedTable extends `${infer TableReference} ${KeywordVariantsTypeB} ${infer TableFactor}`
-    ? [TableReference, TableFactor]
-    : never;
-
-// JoinedTable of type C
-// table_reference NATURAL [INNER | {LEFT|RIGHT} [OUTER]] JOIN table_factor
-type KeyWordVariantsTypeC =
-  | "NATURAL LEFT JOIN"
-  | "NATURAL LEFT OUTER JOIN"
-  | "NATURAL RIGHT JOIN"
-  | "NATURAL RIGHT OUTER JOIN"
-  | "NATURAL INNER JOIN"
-  | "NATURAL JOIN";
-type IsJoinedTableTypeC<TableReference extends string> =
-  TableReference extends `${infer _TableReference} ${KeyWordVariantsTypeC} ${infer _TableFactor}` ? true : false;
-
-export type ParseJoinedTableTypeC<JoinedTable extends string> =
-  JoinedTable extends `${infer TableReference} ${KeyWordVariantsTypeC} ${infer TableFactor}`
-    ? [TableReference, TableFactor]
-    : never;
-
-type IsJoinedTable<TableReference extends string> =
-  IsJoinedTableTypeA<TableReference> extends true
-    ? true
-    : IsJoinedTableTypeB<TableReference> extends true
-      ? true
-      : IsJoinedTableTypeC<TableReference> extends true
-        ? true
-        : false;
-
-export type ParseJoinedTable<JoinedTable extends string> =
-  IsJoinedTableTypeA<JoinedTable> extends true
-    ? ParseJoinedTableTypeA<JoinedTable>
-    : IsJoinedTableTypeB<JoinedTable> extends true
-      ? ParseJoinedTableTypeB<JoinedTable>
-      : IsJoinedTableTypeC<JoinedTable> extends true
-        ? ParseJoinedTableTypeC<JoinedTable>
-        : never;
-
-export type ParseTableReference<TableReference extends string> =
-  IsJoinedTable<TableReference> extends true ? ParseJoinedTable<TableReference> : ParseTableFactor<TableReference>;
+export type ParseTableReference<TableRef extends string> = FilterKeywordsAndEmptyStrings<SplitBySpace<TableRef>>;
