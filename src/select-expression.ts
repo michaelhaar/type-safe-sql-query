@@ -31,28 +31,19 @@ export type ParseSelectExpressions<Query extends string> = Query extends `${infe
   ? [SelectExpressions, ...ParseSelectExpressions<Rest>]
   : [Query];
 
-export type SelectExpressionToTableColumnTypeMap<
-  SelectExpression,
-  TableNames extends string[],
-  AllTablesObj,
-> = SelectExpression extends "*"
-  ? TableNames[0] extends keyof AllTablesObj
-    ? AllTablesObj[TableNames[0]]
-    : never
-  : SelectExpression extends `${infer TableName}.*`
-    ? TableName extends keyof AllTablesObj
-      ? AllTablesObj[TableName]
+export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables> = Queries extends [
+  infer First extends string,
+  ...infer Rest extends string[],
+]
+  ? First extends `${infer TableName}.*`
+    ? TableName extends keyof Tables
+      ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
       : never
-    : SelectExpression extends `${infer TableName}.${infer ColumnName}` // TODO: support nested?
-      ? TableName extends keyof AllTablesObj
-        ? ColumnName extends keyof AllTablesObj[TableName]
-          ? { [K in ColumnName]: AllTablesObj[TableName][ColumnName] }
+    : First extends `${infer TableName}.${infer ColumnName}`
+      ? TableName extends keyof Tables
+        ? ColumnName extends keyof Tables[TableName]
+          ? { [K in ColumnName]: Tables[TableName][ColumnName] } & PickWithSanitizedSelectExpressions<Rest, Tables>
           : never
         : never
-      : SelectExpression extends `${infer ColumnName}`
-        ? TableNames[0] extends keyof AllTablesObj
-          ? ColumnName extends keyof AllTablesObj[TableNames[0]]
-            ? { [K in ColumnName]: AllTablesObj[TableNames[0]][ColumnName] }
-            : never
-          : never
-        : never;
+      : never
+  : {};

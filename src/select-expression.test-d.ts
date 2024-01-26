@@ -1,5 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { ParseSelectExpressions, SelectExpressionToTableColumnTypeMap } from "./select-expression";
+import { ParseSelectExpressions, PickWithSanitizedSelectExpressions } from "./select-expression";
 
 describe("ParseSelectExpressions", () => {
   function parseSelectExpressions<Query extends string>(query: Query): ParseSelectExpressions<Query> {
@@ -27,7 +27,7 @@ describe("ParseSelectExpressions", () => {
   });
 });
 
-describe("SelectExpressionToTableColumnTypeMap", () => {
+describe("PickWithSanitizedSelectExpressions", () => {
   type TestTables = {
     users: {
       id: number;
@@ -41,34 +41,29 @@ describe("SelectExpressionToTableColumnTypeMap", () => {
     };
   };
 
-  function selectExpressionToTableColumnTypeMap<SE extends string>(
-    se: SE
-  ): SelectExpressionToTableColumnTypeMap<SE, ["users"], TestTables> {
-    return se as any;
+  function pickWithSanitizedSelectExpressions<S extends string[]>(
+    s: S
+  ): PickWithSanitizedSelectExpressions<S, TestTables> {
+    return s as any;
   }
 
-  test("*", () => {
-    const selectExpression = selectExpressionToTableColumnTypeMap("*");
-    expectTypeOf(selectExpression).toMatchTypeOf<TestTables["users"]>();
-  });
-
-  test("id", () => {
-    const selectExpression = selectExpressionToTableColumnTypeMap("id");
-    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number }>();
-  });
-
-  test("name", () => {
-    const selectExpression = selectExpressionToTableColumnTypeMap("name");
-    expectTypeOf(selectExpression).toMatchTypeOf<{ name: string }>();
-  });
-
   test("users.*", () => {
-    const selectExpression = selectExpressionToTableColumnTypeMap("users.*");
+    const selectExpression = pickWithSanitizedSelectExpressions(["users.*"] as const);
     expectTypeOf(selectExpression).toMatchTypeOf<TestTables["users"]>();
   });
 
   test("users.id", () => {
-    const selectExpression = selectExpressionToTableColumnTypeMap("users.id");
+    const selectExpression = pickWithSanitizedSelectExpressions(["users.id"] as const);
     expectTypeOf(selectExpression).toMatchTypeOf<{ id: number }>();
+  });
+
+  test("users.id, users.name", () => {
+    const selectExpression = pickWithSanitizedSelectExpressions(["users.id", "users.name"] as const);
+    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number; name: string }>();
+  });
+
+  test("users.id, posts.title", () => {
+    const selectExpression = pickWithSanitizedSelectExpressions(["users.id", "posts.title"] as const);
+    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number; title: string }>();
   });
 });
