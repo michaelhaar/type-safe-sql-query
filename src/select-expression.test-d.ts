@@ -1,5 +1,9 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { ParseSelectExpressions, PickWithSanitizedSelectExpressions } from "./select-expression";
+import {
+  ParseSelectExpressions,
+  PickWithSanitizedSelectExpressions,
+  SanitizeSelectExpressions,
+} from "./select-expression";
 
 describe("ParseSelectExpressions", () => {
   function parseSelectExpressions<Query extends string>(query: Query): ParseSelectExpressions<Query> {
@@ -24,6 +28,22 @@ describe("ParseSelectExpressions", () => {
   test("tbl_name.col1, tbl_name.col2", () => {
     const selectExpressions = parseSelectExpressions("tbl_name.col1, tbl_name.col2");
     expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1", "tbl_name.col2"]>();
+  });
+});
+
+describe("SanitizeSelectExpressions", () => {
+  function sanitizeSelectExpressions<S extends string[]>(s: S): SanitizeSelectExpressions<S, "users"> {
+    return s as any;
+  }
+
+  test("users.*", () => {
+    const selectExpressions = sanitizeSelectExpressions(["*"] as const);
+    expectTypeOf(selectExpressions).toMatchTypeOf<["users.*"]>();
+  });
+
+  test("users.id", () => {
+    const selectExpressions = sanitizeSelectExpressions(["id", "name"] as const);
+    expectTypeOf(selectExpressions).toMatchTypeOf<["users.id", "users.name"]>();
   });
 });
 

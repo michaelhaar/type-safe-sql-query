@@ -31,6 +31,14 @@ export type ParseSelectExpressions<Query extends string> = Query extends `${infe
   ? [SelectExpressions, ...ParseSelectExpressions<Rest>]
   : [Query];
 
+export type SanitizedSelectExpressions<S extends string[], DefaultTableName extends string> = S extends []
+  ? []
+  : S extends [infer First extends string, ...infer Rest extends string[]]
+    ? First extends `${infer _TableName}.${infer _ColumnName}`
+      ? [First, ...SanitizedSelectExpressions<Rest>]
+      : [`${DefaultTableName}.${First}`, ...SanitizedSelectExpressions<Rest>]
+    : never;
+
 export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables> = Queries extends [
   infer First extends string,
   ...infer Rest extends string[],
