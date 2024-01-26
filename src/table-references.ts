@@ -50,15 +50,15 @@
  * index_list:
  *     index_name [, index_name] ...
  * ```
- */
-
-/**
- * Not supported:
- * - PARTITION
- * - alias
- * - table_subquery
- * - index_hint_list
- * - join_specification
+ *
+ *
+ *
+ * Not supported ATM:
+ *   - PARTITION
+ *   - alias
+ *   - table_subquery
+ *   - index_hint_list
+ *   - join_specification
  */
 
 import { FilterOut, Split } from "./utils";
