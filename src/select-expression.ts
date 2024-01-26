@@ -46,13 +46,13 @@ export type SelectExpressionToTableColumnTypeMap<
     : SelectExpression extends `${infer TableName}.${infer ColumnName}` // TODO: support nested?
       ? TableName extends keyof AllTablesObj
         ? ColumnName extends keyof AllTablesObj[TableName]
-          ? AllTablesObj[TableName][ColumnName]
+          ? { [K in ColumnName]: AllTablesObj[TableName][ColumnName] }
           : never
         : never
       : SelectExpression extends `${infer ColumnName}`
         ? TableNames[0] extends keyof AllTablesObj
           ? ColumnName extends keyof AllTablesObj[TableNames[0]]
-            ? AllTablesObj[TableNames[0]][ColumnName]
+            ? { [K in ColumnName]: AllTablesObj[TableNames[0]][ColumnName] }
             : never
           : never
         : never;

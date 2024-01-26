@@ -54,12 +54,12 @@ describe("SelectExpressionToTableColumnTypeMap", () => {
 
   test("id", () => {
     const selectExpression = selectExpressionToTableColumnTypeMap("id");
-    expectTypeOf(selectExpression).toMatchTypeOf<number>();
+    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number }>();
   });
 
   test("name", () => {
     const selectExpression = selectExpressionToTableColumnTypeMap("name");
-    expectTypeOf(selectExpression).toMatchTypeOf<string>();
+    expectTypeOf(selectExpression).toMatchTypeOf<{ name: string }>();
   });
 
   test("users.*", () => {
@@ -69,6 +69,6 @@ describe("SelectExpressionToTableColumnTypeMap", () => {
 
   test("users.id", () => {
     const selectExpression = selectExpressionToTableColumnTypeMap("users.id");
-    expectTypeOf(selectExpression).toMatchTypeOf<number>();
+    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number }>();
   });
 });
