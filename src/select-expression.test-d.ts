@@ -36,12 +36,12 @@ describe("SanitizeSelectExpressions", () => {
     return s as any;
   }
 
-  test("users.*", () => {
+  test("*", () => {
     const selectExpressions = sanitizeSelectExpressions(["*"] as const);
     expectTypeOf(selectExpressions).toMatchTypeOf<["users.*"]>();
   });
 
-  test("users.id", () => {
+  test("id, name", () => {
     const selectExpressions = sanitizeSelectExpressions(["id", "name"] as const);
     expectTypeOf(selectExpressions).toMatchTypeOf<["users.id", "users.name"]>();
   });
