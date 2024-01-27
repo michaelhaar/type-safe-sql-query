@@ -12,7 +12,7 @@
  *
  * select_expr:
  *    `*`
- *   | tbl_name.`*` [[AS] alias]
+ *   | tbl_name.`*`
  *   | col_name [[AS] alias]
  *   | tbl_name.col_name [AS alias]
  *   | TODO: add Functions (COUNT, SUM, AVG, etc.), Expressions (1 + 1, etc.) and Things like `DISTINCT`?
