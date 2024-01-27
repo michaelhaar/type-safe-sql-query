@@ -1,18 +1,22 @@
 {
   "name": "mysql-to-ts",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest --typecheck"
+    "test": "vitest run --typecheck",
+    "prettier:write": "prettier --write .",
+    "prettier:check": "prettier --check ."
   },
   "author": "Michael Haar",
   "license": "MIT",
-  "dependencies": {
-    "prettier": "^3.2.4"
-  },
   "devDependencies": {
     "@types/node": "^20.11.5",
-    "vitest": "^1.2.1"
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vitest": "1.2.2"
+  },
+  "prettier": {
+    "printWidth": 120
   }
 }
