@@ -69,7 +69,7 @@ const [users] = await queryWrapper("SELECT * FROM `users` WHERE `name` = ? AND `
 
 ## Motivation: Do we need an Abstraction?
 
-[ThePrimeagen](https://twitter.com/ThePrimeagen) (who works at Netflix BTW) recently published some videos about ORMs and SQL:
+[ThePrimeagen](https://twitter.com/ThePrimeagen) (I think he works at Netflix) recently published some videos about ORMs and SQL:
 
 - [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
 - [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
@@ -79,11 +79,14 @@ He did a quick poll in one of those videos and people seem to choose SQL over OR
 ![Do you like orms](docs/assets/do-you-like-orms.png)
 (Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
 
-My guess is this might also be the reason why [Drizzle ORM](https://orm.drizzle.team/) is so popular at the moment because one of it's main philosophies is:
+My guess is this might also be the reason why [Drizzle ORM](https://orm.drizzle.team/) is so popular at the moment (9th Place at [2023 JavaScript Rising Stars](https://risingstars.js.org/2023/en#section-all)) since one of it's main selling points is:
 
 > If you know SQL — you know Drizzle.
 
-SQL has been around since the 1970s, and was standardized by the American National Standards Institute (ANSI) in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)). I assume there must be a reason why it's still around after approximately **half a century** and is still one of the most used databases according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases), while other software technologies barely survive a decade.
+SQL has been around since the 1970s, and was standardized by the American National Standards Institute (ANSI) in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)). There must be a good reason why it's still around after approximately **half a century** and is still one of the most used databases according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases), while other software technologies barely survive a decade.
+
+![so-database-survey-2023](docs/assets/so-database-survey-2023.png)
+(Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases))
 
 ### 3 Different Classes of Abstraction
 
@@ -117,7 +120,7 @@ TODO: add short and simple example
 
 ### A Single Source of Truth?
 
-When developing server code with TypeScript (for example with frameworks like Nextjs, Express, Fastlify or Nestjs), we'll inevitably come up against the question of how to interact with your database.
+When developing server code with TypeScript (for example with frameworks like Nextjs, Express, Fastlify or Nestjs), we'll inevitably come up against the question of how to interact with our database.
 
 [Dan Vanderkam](https://twitter.com/danvdk) wrote a great article about [TypeScript and SQL: Six Ways to Bridge the Divide](https://effectivetypescript.com/2023/08/29/sql/).
 
@@ -125,10 +128,10 @@ There's lots of type information in our SQL database (the structure of the table
 
 So you want a single source of truth? Where should it be? In the database or in the TypeScript code?
 
-Most ORMs (like Prisma, TypeORM and Drizzle for example) use TypeScript as the source of truth. You define your models in TypeScript and the ORM generates the types from that. E.g.:
+Most ORMs (like Prisma, TypeORM and Drizzle for example) use TypeScript as the source of truth. We define our models in TypeScript and the ORM generates the types from that. E.g.:
 
 - Prisma uses the `schema.prisma` file which is used by a compiler,
-- Drizzle uses an API for declaring SQL schemas like `pgSchema`
+- Drizzle uses the `pgSchema` object for declaring SQL schemas,
 - and TypeORM uses `Entities` which are classes that map to a database tables.
 
 In contrast to the choices made by the ORMs mentioned above, I think it's quite obvious that the database should be the source of truth. It's the only place where the data is stored and TypeScript is a consumer of that data and thus should infer the types from the database.
@@ -141,3 +144,12 @@ You might ask yourself why I chose MySQL as the main SQL dialect for this projec
 - it's second most popular database according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases),
 - [PlanetScale](https://planetscale.com/) is using it,
 - I'm using it in a current project and we are not happy with the current ORM we're using.
+
+## Why Open Source?
+
+See:
+
+- [Why do Open Source](https://www.youtube.com/shorts/lMlhkWYe5qc)
+- [Don't Contribute to Open Source](https://youtu.be/5nY_cy8zcO4?feature=shared)
+
+TLDR: I had a pain point and I wanted to solve it. I'm not sure if this is the best solution but I'm willing to give it a try.
