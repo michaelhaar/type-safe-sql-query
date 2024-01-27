@@ -77,7 +77,7 @@ describe("InferReturnTypeFromSelectStatement", () => {
   };
 
   function inferReturnTypeFromSelectStatement<Query extends string>(
-    query: Query
+    query: Query,
   ): InferReturnTypeFromSelectStatement<Query, TestTables> {
     return query as any;
   }

@@ -62,7 +62,7 @@ describe("PickWithSanitizedSelectExpressions", () => {
   };
 
   function pickWithSanitizedSelectExpressions<S extends string[]>(
-    s: S
+    s: S,
   ): PickWithSanitizedSelectExpressions<S, TestTables> {
     return s as any;
   }
@@ -79,11 +79,17 @@ describe("PickWithSanitizedSelectExpressions", () => {
 
   test("users.id, users.name", () => {
     const selectExpression = pickWithSanitizedSelectExpressions(["users.id", "users.name"] as const);
-    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number; name: string }>();
+    expectTypeOf(selectExpression).toMatchTypeOf<{
+      id: number;
+      name: string;
+    }>();
   });
 
   test("users.id, posts.title", () => {
     const selectExpression = pickWithSanitizedSelectExpressions(["users.id", "posts.title"] as const);
-    expectTypeOf(selectExpression).toMatchTypeOf<{ id: number; title: string }>();
+    expectTypeOf(selectExpression).toMatchTypeOf<{
+      id: number;
+      title: string;
+    }>();
   });
 });
