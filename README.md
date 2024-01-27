@@ -79,7 +79,7 @@ He did a quick poll in one of those videos and people seem enjoy writing SQL sta
 ![Do you like orms](docs/assets/do-you-like-orms.png)
 (Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
 
-My guess is this might also be the reason why [Drizzle ORM](https://orm.drizzle.team/) is so popular at the moment (9th Place at [2023 JavaScript Rising Stars](https://risingstars.js.org/2023/en#section-all)) since one of it's main selling points is:
+Maybe that's also the reason why [Drizzle ORM](https://orm.drizzle.team/) is so popular at the moment (9th Place at [2023 JavaScript Rising Stars](https://risingstars.js.org/2023/en#section-all)) since one of it's main selling points is:
 
 > If you know SQL — you know Drizzle.
 
