@@ -1,4 +1,4 @@
-# mysql-to-ts
+# mysql-ts
 
 - ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
 - ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
@@ -9,9 +9,9 @@
 
 I'm trying to build something like this:
 
-![mysql-to-ts](docs/assets/high-level-overview.png)
+![mysql-ts](docs/assets/high-level-overview.png)
 
-The goal is to use `mysql-to-ts` like this:
+The goal is to use `mysql-ts` like this:
 
 1. Pull table types from a live database
 2. Use the type utilities to create a type-safe query
@@ -28,11 +28,11 @@ CREATE TABLE `users` (
 );
 ```
 
-We can use `mysql-to-ts` like this:
+We can use `mysql-ts` like this:
 
 ```ts
 import mysql from "mysql2/promise";
-import type { MySqlQueryWrapper } from "mysql-to-ts";
+import type { MySqlQueryWrapper } from "mysql-ts";
 
 // Create the connection to database
 const connection = await mysql.createConnection({
