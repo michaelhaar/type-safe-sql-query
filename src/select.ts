@@ -79,4 +79,4 @@ export type GetSanitizedSelectExpressions<Query extends string> = SanitizeSelect
 export type InferReturnTypeFromSelectStatement<Query extends string, Tables> = PickWithSanitizedSelectExpressions<
   GetSanitizedSelectExpressions<Query>,
   Tables
->;
+>[];

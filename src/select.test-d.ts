@@ -84,16 +84,16 @@ describe("InferReturnTypeFromSelectStatement", () => {
 
   test("SELECT * FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT * FROM users");
-    expectTypeOf(result).toMatchTypeOf<TestTables["users"]>();
+    expectTypeOf(result).toMatchTypeOf<TestTables["users"][]>();
   });
 
   test("SELECT id, name FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT id, name FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; name: string }>();
+    expectTypeOf(result).toMatchTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT users.id, posts.title FROM users JOIN posts", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT users.id, posts.title FROM users JOIN posts");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; title: string }>();
+    expectTypeOf(result).toMatchTypeOf<{ id: number; title: string }[]>();
   });
 });
