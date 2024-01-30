@@ -29,6 +29,11 @@ describe("ParseSelectExpressions", () => {
     const selectExpressions = parseSelectExpressions("tbl_name.col1, tbl_name.col2");
     expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1", "tbl_name.col2"]>();
   });
+
+  test("tbl_name.col1 as col1_alias, tbl_name.col2 as col2_alias", () => {
+    const selectExpressions = parseSelectExpressions("tbl_name.col1 as col1_alias, tbl_name.col2 as col2_alias");
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1 as col1_alias", "tbl_name.col2 as col2_alias"]>();
+  });
 });
 
 describe("SanitizeSelectExpressions", () => {
