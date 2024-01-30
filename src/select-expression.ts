@@ -55,11 +55,17 @@ export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables>
     ? TableName extends keyof Tables
       ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
       : never
-    : First extends `${infer TableName}.${infer ColumnName}`
+    : First extends `${infer TableName}.${infer ColumnName} ${"AS " | ""}${infer Alias}`
       ? TableName extends keyof Tables
         ? ColumnName extends keyof Tables[TableName]
-          ? { [K in ColumnName]: Tables[TableName][ColumnName] } & PickWithSanitizedSelectExpressions<Rest, Tables>
+          ? { [K in Alias]: Tables[TableName][ColumnName] } & PickWithSanitizedSelectExpressions<Rest, Tables>
           : never
         : never
-      : never
+      : First extends `${infer TableName}.${infer ColumnName}`
+        ? TableName extends keyof Tables
+          ? ColumnName extends keyof Tables[TableName]
+            ? { [K in ColumnName]: Tables[TableName][ColumnName] } & PickWithSanitizedSelectExpressions<Rest, Tables>
+            : never
+          : never
+        : never
   : {};
