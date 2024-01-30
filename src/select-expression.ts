@@ -27,10 +27,18 @@
  *  - Things like `DISTINCT`
  */
 
-export type ParseSelectExpressions<Query extends string> = Query extends `${infer SelectExpressions}, ${infer Rest}`
-  ? [SelectExpressions, ...ParseSelectExpressions<Rest>]
-  : [Query];
+import { Split } from "./utils";
 
+/**
+ * Extracts the `select_expr` part from a `SELECT` statement.
+ * e.g ParseSelectExpressions<"col1, col2, col3"> => ["col1", "col2", "col3"]
+ */
+export type ParseSelectExpressions<Query extends string> = Split<Query, ", ">;
+
+/**
+ * Sanitizes the `select_expr` part from a `SELECT` statement.
+ * e.g SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
+ */
 export type SanitizeSelectExpressions<S extends string[], DefaultTableName extends string> = S extends []
   ? []
   : S extends [infer First extends string, ...infer Rest extends string[]]
