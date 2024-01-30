@@ -29,21 +29,41 @@ describe("ParseSelectExpressions", () => {
     const selectExpressions = parseSelectExpressions("tbl_name.col1, tbl_name.col2");
     expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1", "tbl_name.col2"]>();
   });
+
+  test("tbl_name.col1 AS col1_alias, tbl_name.col2 AS col2_alias", () => {
+    const selectExpressions = parseSelectExpressions("tbl_name.col1 AS col1_alias, tbl_name.col2 AS col2_alias");
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1 AS col1_alias", "tbl_name.col2 AS col2_alias"]>();
+  });
+
+  test("tbl_name.col1 col1_alias, tbl_name.col2 col2_alias", () => {
+    const selectExpressions = parseSelectExpressions("tbl_name.col1 col1_alias, tbl_name.col2 col2_alias");
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1 col1_alias", "tbl_name.col2 col2_alias"]>();
+  });
 });
 
 describe("SanitizeSelectExpressions", () => {
-  function sanitizeSelectExpressions<S extends string[]>(s: S): SanitizeSelectExpressions<S, "users"> {
+  function sanitizeSelectExpressions<S extends string[]>(s: S): SanitizeSelectExpressions<S, "tbl_name"> {
     return s as any;
   }
 
   test("*", () => {
     const selectExpressions = sanitizeSelectExpressions(["*"] as const);
-    expectTypeOf(selectExpressions).toMatchTypeOf<["users.*"]>();
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.*"]>();
   });
 
-  test("id, name", () => {
-    const selectExpressions = sanitizeSelectExpressions(["id", "name"] as const);
-    expectTypeOf(selectExpressions).toMatchTypeOf<["users.id", "users.name"]>();
+  test("col1, col2", () => {
+    const selectExpressions = sanitizeSelectExpressions(["col1", "col2"] as const);
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1", "tbl_name.col2"]>();
+  });
+
+  test("col1 as col1_alias, col2 as col2_alias", () => {
+    const selectExpressions = sanitizeSelectExpressions(["col1 as col1_alias", "col2 as col2_alias"] as const);
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1 as col1_alias", "tbl_name.col2 as col2_alias"]>();
+  });
+
+  test("col1 col1_alias, col2 col2_alias", () => {
+    const selectExpressions = sanitizeSelectExpressions(["col1 col1_alias", "col2 col2_alias"] as const);
+    expectTypeOf(selectExpressions).toMatchTypeOf<["tbl_name.col1 col1_alias", "tbl_name.col2 col2_alias"]>();
   });
 });
 
