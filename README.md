@@ -153,3 +153,8 @@ See:
 - [Don't Contribute to Open Source](https://youtu.be/5nY_cy8zcO4?feature=shared)
 
 TLDR: I had a pain point and I wanted to solve it. I'm not sure if this is the best solution but I'm willing to give it a try.
+
+
+## TODO: 
+
+- [ ] Add comparison with [pgTyped](https://github.com/adelsz/pgtyped) and [ts-mysql-plugin](https://github.com/segmentio/ts-mysql-plugin)
