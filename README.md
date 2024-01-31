@@ -1,4 +1,122 @@
-# sql2typescript
+# Sql2TypeScript
+
+<div align="center">
+  <img src="docs/assets/interim_logo.png" width="200px" alt="sql2typescript logo" />
+  <h3>Bridging the Gap Between SQL and TypeScript Types</h3>
+  <a href="/">Try now</a> •
+  <a href="/">Features</a> •
+  <a href="/">Docs</a> •
+  <a href="/">Roadmap</a> •
+  <a href="/">FAQ</a>
+</div>
+
+## What is Sql2TypeScript?
+
+`sql2typescript` is a **type-safe** SQL query wrapper for TypeScript. It's a **zero dependency** library that uses the database as the **single source of truth**.
+
+## Features
+
+- ✅ DB as **single source of truth** => no schema drift.
+- ✅ **Automatic type-safe** SQL queries.
+- ✅ **No compilation** step
+- ✅ **No runtime overhead**.
+- ✅ **Zero dependencies.**
+- ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
+- ✅ **Simple and familiar**
+  
+## Installation
+
+```bash
+npm install -D sql2typescript
+
+# or
+yarn add -D sql2typescript
+
+# or
+pnpm add -D sql2typescript
+```
+
+## Basic Usage
+
+The following examples demonstrates how to use `sql2typescript` with MySQL.
+
+```ts
+import type { InferReturnTypeFromSelectStatement } from "sql2typescript";
+import type { Tables } from "./tables";
+
+type Result = InferReturnTypeFromSelectStatement<
+  "SELECT * FROM users WHERE name = ? AND age > ?",
+  Tables
+>
+// Result is: { id: number, name: string, age: number, email: string }[]
+
+
+type Params = InferParamsTypeFromSelectStatement<
+  "SELECT * FROM users WHERE name = ? AND age > ?",
+  Tables
+>
+// Params is: [string, number]
+
+
+type ResultWithAlias = InferReturnTypeFromSelectStatement<
+  "SELECT name AS fullName, age FROM Users",
+  Tables
+>
+// ResultWithAlias is: { fullName: string, age: number }[]
+```
+
+The examples above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
+
+```ts
+// tables.ts (auto-generated with schemats)
+
+export type Tables = {
+  users: {
+    id: number;
+    name: string;
+    age: number;
+    email: string;
+  }
+  // ...
+}
+```
+
+### Usage with Low Level Database Drivers
+
+The following example demonstrates how to use `sql2typescript` with the [mysql2](https://github.com/sidorares/node-mysql2) driver.
+
+
+```ts
+import mysql from "mysql2/promise";
+import type { 
+  InferParamsTypeFromSelectStatement, 
+  InferParamsFromSelectStatement 
+} from "sql2typescript";
+import type { Tables } from "./tables";
+
+// Create the connection to database
+const connection = await mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  database: "test",
+});
+
+// Create a type-safe query wrapper
+async function queryWrapper<S extends string>(
+  sql: S,
+  params: InferParamsTypeFromSelectStatement<S, Tables>,
+): InferParamsFromSelectStatement<S, Tables> {
+  const [results] = await connection.query(sql, params);
+  return results as any;
+}
+
+// Use the type-safe query wrapper to query the database.
+const users = await queryWrapper("SELECT * FROM users WHERE name = ? AND age > ?", ["Michael", 36]);
+```
+
+Other low level database drivers like [mysql](https://github.com/mysqljs/mysql), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/) should work similarly.
+
+## Why?
 
 - ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
 - ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
