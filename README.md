@@ -4,9 +4,9 @@
   <img src="docs/assets/interim_logo.png" width="200px" alt="sql2typescript logo" />
   <h3>Bridging the Gap Between SQL and TypeScript Types</h3>
   <a href="/">Try now</a> •
-  <a href="/">Features</a> •
+  <a href="#features">Features</a> •
   <a href="/">Docs</a> •
-  <a href="/">Roadmap</a> •
+  <a href="/docs/roadmap">Roadmap</a> •
   <a href="/">FAQ</a>
 </div>
 
@@ -23,7 +23,7 @@
 - ✅ **Zero dependencies.**
 - ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
 - ✅ **Simple and familiar**
-  
+
 ## Installation
 
 ```bash
@@ -44,24 +44,13 @@ The following examples demonstrates how to use `sql2typescript` with MySQL.
 import type { InferReturnTypeFromSelectStatement } from "sql2typescript";
 import type { Tables } from "./tables";
 
-type Result = InferReturnTypeFromSelectStatement<
-  "SELECT * FROM users WHERE name = ? AND age > ?",
-  Tables
->
+type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
 // Result is: { id: number, name: string, age: number, email: string }[]
 
-
-type Params = InferParamsTypeFromSelectStatement<
-  "SELECT * FROM users WHERE name = ? AND age > ?",
-  Tables
->
+type Params = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
 // Params is: [string, number]
 
-
-type ResultWithAlias = InferReturnTypeFromSelectStatement<
-  "SELECT name AS fullName, age FROM Users",
-  Tables
->
+type ResultWithAlias = InferReturnTypeFromSelectStatement<"SELECT name AS fullName, age FROM Users", Tables>;
 // ResultWithAlias is: { fullName: string, age: number }[]
 ```
 
@@ -76,22 +65,18 @@ export type Tables = {
     name: string;
     age: number;
     email: string;
-  }
+  };
   // ...
-}
+};
 ```
 
 ### Usage with Low Level Database Drivers
 
 The following example demonstrates how to use `sql2typescript` with the [mysql2](https://github.com/sidorares/node-mysql2) driver.
 
-
 ```ts
 import mysql from "mysql2/promise";
-import type { 
-  InferParamsTypeFromSelectStatement, 
-  InferParamsFromSelectStatement 
-} from "sql2typescript";
+import type { InferParamsTypeFromSelectStatement, InferParamsFromSelectStatement } from "sql2typescript";
 import type { Tables } from "./tables";
 
 // Create the connection to database
