@@ -177,15 +177,6 @@ Most ORMs (like Prisma, TypeORM and Drizzle for example) use TypeScript as the s
 
 In contrast to the choices made by the ORMs mentioned above, I think it's quite obvious that the database should be the source of truth. It's the only place where the data is stored and TypeScript is a consumer of that data and thus should infer the types from the database.
 
-## Why MySQL?
-
-You might ask yourself why I chose MySQL as the main SQL dialect for this project. The reasons are simple:
-
-- I'm most familiar with MySQL,
-- it's second most popular database according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases),
-- [PlanetScale](https://planetscale.com/) is using it,
-- I'm using it in a current project and we are not happy with the current ORM we're using.
-
 ## Why Open Source?
 
 See:
