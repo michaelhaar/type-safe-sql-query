@@ -41,16 +41,16 @@ pnpm add -D sql2typescript
 The following examples demonstrates how to use `sql2typescript` with MySQL.
 
 ```ts
-import type { InferReturnTypeFromSelectStatement } from "sql2typescript";
+import type { InferReturnTypeFromSqlStatement, InferParamsTypeFromSqlStatement } from "sql2typescript";
 import type { Tables } from "./tables";
 
-type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
 // Result is: { id: number, name: string, age: number, email: string }[]
 
-type Params = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Params = InferParamsTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
 // Params is: [string, number]
 
-type ResultWithAlias = InferReturnTypeFromSelectStatement<"SELECT name AS fullName, age FROM Users", Tables>;
+type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName, age FROM Users", Tables>;
 // ResultWithAlias is: { fullName: string, age: number }[]
 ```
 
@@ -76,7 +76,7 @@ The following example demonstrates how to use `sql2typescript` with the [mysql2]
 
 ```ts
 import mysql from "mysql2/promise";
-import type { InferParamsTypeFromSelectStatement, InferParamsFromSelectStatement } from "sql2typescript";
+import type { InferParamsTypeFromSqlStatement, InferParamsFromSqlStatement } from "sql2typescript";
 import type { Tables } from "./tables";
 
 // Create the connection to database
@@ -89,8 +89,8 @@ const connection = await mysql.createConnection({
 // Create a type-safe query wrapper
 async function queryWrapper<S extends string>(
   sql: S,
-  params: InferParamsTypeFromSelectStatement<S, Tables>,
-): InferParamsFromSelectStatement<S, Tables> {
+  params: InferParamsTypeFromSqlStatement<S, Tables>,
+): InferReturnTypeFromSqlStatement<S, Tables> {
   const [results] = await connection.query(sql, params);
   return results as any;
 }
