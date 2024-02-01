@@ -1,38 +1,83 @@
-# sql2typescript
+# Sql2TypeScript
 
-- ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
-- ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
-- Most ORMs and Query Builders are just wrappers around common packages/drivers like [mysql](https://github.com/mysqljs/mysql), [mysql2](https://github.com/sidorares/node-mysql2), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/). => Unnecessary performance/runtime overhead.
-- Having a dedicated compilation step that depends on the target platform (e.g., [Prisma](https://www.prisma.io/)) is quite cumbersome. => Unnecessary complexity.
+<div align="center">
+  <img src="docs/assets/interim_logo.png" width="200px" alt="sql2typescript logo" />
+  <h3>Bridging the Gap Between SQL and TypeScript Types</h3>
+  <a href="/">Try now</a> •
+  <a href="#features">Features</a> •
+  <a href="/">Docs</a> •
+  <a href="/docs/roadmap">Roadmap</a> •
+  <a href="/">FAQ</a>
+</div>
 
-## Goals
+## What is Sql2TypeScript?
 
-I'm trying to build something like this:
+`sql2typescript` is a **type-safe** SQL query wrapper for TypeScript. It's a **zero dependency** library that uses the database as the **single source of truth**.
 
-![sql2typescript](docs/assets/high-level-overview.png)
+## Features
 
-The goal is to use `sql2typescript` like this:
+- ✅ DB as **single source of truth** => no schema drift.
+- ✅ **Automatic type-safe** SQL queries.
+- ✅ **No compilation** step
+- ✅ **No runtime overhead**.
+- ✅ **Zero dependencies.**
+- ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
+- ✅ **Simple and familiar**
 
-1. Pull table types from a live database
-2. Use the type utilities to create a type-safe query
+## Installation
 
-e.g.:
+```bash
+npm install -D sql2typescript
 
-Assuming we have a table called `users` with the following schema:
+# or
+yarn add -D sql2typescript
 
-```sql
-CREATE TABLE `users` (
-  id int NOT NULL AUTO_INCREMENT,
-  name varchar(255) NOT NULL,
-  age int NOT NULL,
-);
+# or
+pnpm add -D sql2typescript
 ```
 
-We can use `sql2typescript` like this:
+## Basic Usage
+
+The following examples demonstrates how to use `sql2typescript` with MySQL.
+
+```ts
+import type { InferReturnTypeFromSelectStatement } from "sql2typescript";
+import type { Tables } from "./tables";
+
+type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+// Result is: { id: number, name: string, age: number, email: string }[]
+
+type Params = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+// Params is: [string, number]
+
+type ResultWithAlias = InferReturnTypeFromSelectStatement<"SELECT name AS fullName, age FROM Users", Tables>;
+// ResultWithAlias is: { fullName: string, age: number }[]
+```
+
+The examples above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
+
+```ts
+// tables.ts (auto-generated with schemats)
+
+export type Tables = {
+  users: {
+    id: number;
+    name: string;
+    age: number;
+    email: string;
+  };
+  // ...
+};
+```
+
+### Usage with Low Level Database Drivers
+
+The following example demonstrates how to use `sql2typescript` with the [mysql2](https://github.com/sidorares/node-mysql2) driver.
 
 ```ts
 import mysql from "mysql2/promise";
-import type { MySqlQueryWrapper } from "sql2typescript";
+import type { InferParamsTypeFromSelectStatement, InferParamsFromSelectStatement } from "sql2typescript";
+import type { Tables } from "./tables";
 
 // Create the connection to database
 const connection = await mysql.createConnection({
@@ -41,31 +86,27 @@ const connection = await mysql.createConnection({
   database: "test",
 });
 
-// Wrap the query function with the type-safe query wrapper
-const queryWrapper: MySqlQueryWrapper = (sql, params) => connection.query(sql, params);
+// Create a type-safe query wrapper
+async function queryWrapper<S extends string>(
+  sql: S,
+  params: InferParamsTypeFromSelectStatement<S, Tables>,
+): InferParamsFromSelectStatement<S, Tables> {
+  const [results] = await connection.query(sql, params);
+  return results as any;
+}
 
 // Use the type-safe query wrapper to query the database.
-const [users] = await queryWrapper("SELECT * FROM `users` WHERE `name` = ? AND `age` > ?", ["Michael", 36]);
-
-// Input and output types are inferred from the database schema and the sql statement.
-// type of users is: { id: number, name: string, age: number }[]
-// type of params is: [string, number]
+const users = await queryWrapper("SELECT * FROM users WHERE name = ? AND age > ?", ["Michael", 36]);
 ```
 
-<!-- TODO
-- A **single source of truth** for the database schema.
-- **Type-safe** SQL queries.
-- **No runtime overhead**.
-- **No ORM**.
-- **No SQL query builder**.
-- **No API**.
-- **No magic**.
-- **No leaky abstractions**.
-- **No boilerplate**.
-- **No dependencies**.
-- **No configuration**.
-- **No compilation step**.
-- **No code generation**. -->
+Other low level database drivers like [mysql](https://github.com/mysqljs/mysql), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/) should work similarly.
+
+## Why?
+
+- ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
+- ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
+- Most ORMs and Query Builders are just wrappers around common packages/drivers like [mysql](https://github.com/mysqljs/mysql), [mysql2](https://github.com/sidorares/node-mysql2), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/). => Unnecessary performance/runtime overhead.
+- Having a dedicated compilation step that depends on the target platform (e.g., [Prisma](https://www.prisma.io/)) is quite cumbersome. => Unnecessary complexity.
 
 ## Motivation: Do we need an Abstraction?
 
@@ -156,4 +197,4 @@ TLDR: I had a pain point and I wanted to solve it. I'm not sure if this is the b
 
 ## TODO:
 
-- [ ] Add comparison with [pgTyped](https://github.com/adelsz/pgtyped) and [ts-mysql-plugin](https://github.com/segmentio/ts-mysql-plugin)
+- [ ] Add comparison with [pgTyped](https://github.com/adelsz/pgtyped) and [ts-mysql-plugin](https://github.com/segmentio/ts-mysql-plugin) and [sqlx-ts](https://github.com/JasonShin/sqlx-ts)
