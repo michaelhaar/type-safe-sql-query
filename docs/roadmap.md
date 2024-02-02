@@ -12,7 +12,7 @@ Legend:
 
 | Feature                         | Status |
 | ------------------------------- | ------ |
-| Support for `INSERT` statements | 📝     |
+| Support for `INSERT` statements | ✅     |
 | Support for `UPDATE` statements | 📝     |
 | Support for `DELETE` statements | ✅     |
 | Support for `SELECT` statements | 🏗️     |
