@@ -36,3 +36,16 @@ describe("SELECT", () => {
     expectTypeOf(result).toMatchTypeOf<{ id: number; fullName: string }[]>();
   });
 });
+
+describe("DELETE", () => {
+  function inferReturnTypeFromSqlStatement<Query extends string>(
+    query: Query,
+  ): InferReturnTypeFromSqlStatement<Query, TestTables> {
+    return query as any;
+  }
+
+  test("DELETE FROM users", () => {
+    const result = inferReturnTypeFromSqlStatement("DELETE FROM users");
+    expectTypeOf(result).toMatchTypeOf<string>();
+  });
+});
