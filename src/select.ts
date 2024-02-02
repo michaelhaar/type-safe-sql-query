@@ -57,6 +57,8 @@ import {
 } from "./select-expression";
 import { ParseTableReferences } from "./table-references";
 
+export type IsSelectStatement<Query extends string> = Query extends `SELECT ${string}` ? true : false;
+
 export type ParseSelectStatement<Query extends string> =
   Query extends `SELECT ${infer SelectExpressionsString} FROM ${infer TableReferencesString}`
     ? {
