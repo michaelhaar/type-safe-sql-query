@@ -13,12 +13,12 @@ describe("ParseSelectStatement", () => {
 
   test("SELECT * FROM tbl_name", () => {
     const selectStatement = parseSelectStatement("SELECT * FROM tbl_name");
-    expectTypeOf(selectStatement).toMatchTypeOf<{ selectExpressionsString: "*"; tableReferencesString: "tbl_name" }>();
+    expectTypeOf(selectStatement).toEqualTypeOf<{ selectExpressionsString: "*"; tableReferencesString: "tbl_name" }>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
     const selectStatement = parseSelectStatement("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(selectStatement).toMatchTypeOf<{
+    expectTypeOf(selectStatement).toEqualTypeOf<{
       selectExpressionsString: "col1, col2";
       tableReferencesString: "tbl_name1 JOIN tbl_name2";
     }>();
@@ -32,12 +32,12 @@ describe("GetSelectExpressions", () => {
 
   test("SELECT * FROM tbl_name", () => {
     const selectExpressions = getSelectExpressions("SELECT * FROM tbl_name");
-    expectTypeOf(selectExpressions).toMatchTypeOf<["*"]>();
+    expectTypeOf(selectExpressions).toEqualTypeOf<["*"]>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
     const selectExpressions = getSelectExpressions("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(selectExpressions).toMatchTypeOf<["col1", "col2"]>();
+    expectTypeOf(selectExpressions).toEqualTypeOf<["col1", "col2"]>();
   });
 });
 
@@ -48,12 +48,12 @@ describe("GetTableNames", () => {
 
   test("SELECT * FROM tbl_name", () => {
     const tableNames = getTableNames("SELECT * FROM tbl_name");
-    expectTypeOf(tableNames).toMatchTypeOf<["tbl_name"]>();
+    expectTypeOf(tableNames).toEqualTypeOf<["tbl_name"]>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
     const tableNames = getTableNames("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(tableNames).toMatchTypeOf<["tbl_name1", "tbl_name2"]>();
+    expectTypeOf(tableNames).toEqualTypeOf<["tbl_name1", "tbl_name2"]>();
   });
 });
 
@@ -84,26 +84,26 @@ describe("InferReturnTypeFromSelectStatement", () => {
 
   test("SELECT * FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT * FROM users");
-    expectTypeOf(result).toMatchTypeOf<TestTables["users"][]>();
+    expectTypeOf(result).toEqualTypeOf<TestTables["users"][]>();
   });
 
   test("SELECT id, name FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT id, name FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; name: string }[]>();
+    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT users.id, posts.title FROM users JOIN posts", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT users.id, posts.title FROM users JOIN posts");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; title: string }[]>();
+    expectTypeOf(result).toEqualTypeOf<{ id: number; title: string }[]>();
   });
 
   test("SELECT id AS id_alias FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT id AS id_alias FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id_alias: number }[]>();
+    expectTypeOf(result).toEqualTypeOf<{ id_alias: number }[]>();
   });
 
   test("SELECT id id_alias FROM users", () => {
     const result = inferReturnTypeFromSelectStatement("SELECT id id_alias FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id_alias: number }[]>();
+    expectTypeOf(result).toEqualTypeOf<{ id_alias: number }[]>();
   });
 });

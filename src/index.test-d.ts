@@ -28,32 +28,44 @@ function inferReturnTypeFromSqlStatement<Query extends string>(
 describe("SELECT", () => {
   test("SELECT * FROM users", () => {
     const result = inferReturnTypeFromSqlStatement("SELECT * FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; name: string }[]>();
+    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT id, name AS fullName FROM users", () => {
-    const result = inferReturnTypeFromSqlStatement("SELECT id, name  AS fullName FROM users");
-    expectTypeOf(result).toMatchTypeOf<{ id: number; fullName: string }[]>();
+    const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users");
+    expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
+  });
+
+  test("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name", () => {
+    const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name");
+    expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
+  });
+
+  test("SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId", () => {
+    const result = inferReturnTypeFromSqlStatement(
+      "SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId",
+    );
+    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string; title: string }[]>();
   });
 });
 
 describe("DELETE", () => {
   test("DELETE FROM users", () => {
     const result = inferReturnTypeFromSqlStatement("DELETE FROM users");
-    expectTypeOf(result).toMatchTypeOf<string>();
+    expectTypeOf(result).toEqualTypeOf<string>();
   });
 });
 
 describe("INSERT", () => {
   test("INSERT INTO users (id, name) VALUES (1, 'Alice')", () => {
     const result = inferReturnTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (1, 'Alice')");
-    expectTypeOf(result).toMatchTypeOf<string>();
+    expectTypeOf(result).toEqualTypeOf<string>();
   });
 });
 
 describe("UPDATE", () => {
   test("UPDATE users SET name = 'Bob' WHERE id = 1", () => {
     const result = inferReturnTypeFromSqlStatement("UPDATE users SET name = 'Bob' WHERE id = 1");
-    expectTypeOf(result).toMatchTypeOf<string>();
+    expectTypeOf(result).toEqualTypeOf<string>();
   });
 });

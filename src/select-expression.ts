@@ -27,7 +27,7 @@
  *  - Things like `DISTINCT`
  */
 
-import { Split } from "./utils";
+import { ExpandRecursively, Split } from "./utils";
 
 /**
  * Extracts the `select_expr` part from a `SELECT` statement.
@@ -47,6 +47,18 @@ export type SanitizeSelectExpressions<S extends string[], DefaultTableName exten
       : [`${DefaultTableName}.${First}`, ...SanitizeSelectExpressions<Rest, DefaultTableName>]
     : never;
 
+type ExtractColumnName<S extends string> = S extends `${infer ColumnName1} AS ${string}`
+  ? ColumnName1
+  : S extends `${infer ColumnName2} ${string}`
+    ? ColumnName2
+    : S;
+
+type ExtractAlias<S extends string> = S extends `${string} AS ${infer Alias1}`
+  ? Alias1
+  : S extends `${string} ${infer Alias2}`
+    ? Alias2
+    : S;
+
 export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables> = Queries extends [
   infer First extends string,
   ...infer Rest extends string[],
@@ -55,13 +67,13 @@ export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables>
     ? TableName extends keyof Tables
       ? RestOfFirst extends `*`
         ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
-        : RestOfFirst extends `${infer ColumnName} ${"AS " | ""}${infer Alias}`
-          ? ColumnName extends keyof Tables[TableName]
-            ? { [K in Alias]: Tables[TableName][ColumnName] } & PickWithSanitizedSelectExpressions<Rest, Tables>
-            : never
-          : RestOfFirst extends keyof Tables[TableName]
-            ? { [K in RestOfFirst]: Tables[TableName][RestOfFirst] } & PickWithSanitizedSelectExpressions<Rest, Tables>
-            : never
+        : ExtractColumnName<RestOfFirst> extends keyof Tables[TableName]
+          ? ExpandRecursively<
+              {
+                [K in ExtractAlias<RestOfFirst>]: Tables[TableName][ExtractColumnName<RestOfFirst>];
+              } & PickWithSanitizedSelectExpressions<Rest, Tables>
+            >
+          : never
       : never
     : never
   : {};
