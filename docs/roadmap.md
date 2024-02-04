@@ -8,7 +8,7 @@ Legend:
 - 🏗️: In Progress
 - ✅: Done
 
-## InferReturnTypeFromSelectStatement
+## InferReturnTypeFromSqlStatement
 
 | Feature                         | Status |
 | ------------------------------- | ------ |
