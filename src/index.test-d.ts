@@ -50,3 +50,10 @@ describe("INSERT", () => {
     expectTypeOf(result).toMatchTypeOf<string>();
   });
 });
+
+describe("UPDATE", () => {
+  test("UPDATE users SET name = 'Bob' WHERE id = 1", () => {
+    const result = inferReturnTypeFromSqlStatement("UPDATE users SET name = 'Bob' WHERE id = 1");
+    expectTypeOf(result).toMatchTypeOf<string>();
+  });
+});

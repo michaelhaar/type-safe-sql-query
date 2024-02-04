@@ -5,7 +5,7 @@
  * The exact syntax of the `INSERT` statement is not needed to infer the return type, because it
  * seems like the returned value is always a string.
  *
- * For the sake of completeness, here is the syntax of the `DELETE` statement for a single table:
+ * For the sake of completeness, here is the syntax of the `INSERT` statement:
  *
  * ```
  * INSERT [LOW_PRIORITY | DELAYED | HIGH_PRIORITY] [IGNORE]
