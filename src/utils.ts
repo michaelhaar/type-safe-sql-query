@@ -22,11 +22,12 @@ export type FilterOut<Arr extends any[], FilterType> = Arr extends [infer First,
   : [];
 
 /**
- * From U assign properties to T (just like object assign)
- * @example
- * type T0 = Assign<{ a: 1 }, { b: 2 }>; // { a: 1, b: 2 }
- * type T1 = Assign<{ a: 1 }, { a: 2 }>; // { a: 2 }
+ * Util to expand computed TypeScript types on hover
+ * see: https://github.com/microsoft/vscode/issues/94679
+ * see: https://stackoverflow.com/a/57683652
  */
-export type Assign<T, U> = {
-  [K in keyof T | keyof U]: K extends keyof U ? U[K] : K extends keyof T ? T[K] : never;
-};
+export type ExpandRecursively<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: ExpandRecursively<O[K]> }
+    : never
+  : T;

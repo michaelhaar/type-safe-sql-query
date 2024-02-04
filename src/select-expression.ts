@@ -27,7 +27,7 @@
  *  - Things like `DISTINCT`
  */
 
-import { Assign, Split } from "./utils";
+import { ExpandRecursively, Split } from "./utils";
 
 /**
  * Extracts the `select_expr` part from a `SELECT` statement.
@@ -68,11 +68,10 @@ export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables>
       ? RestOfFirst extends `*`
         ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
         : ExtractColumnName<RestOfFirst> extends keyof Tables[TableName]
-          ? Assign<
+          ? ExpandRecursively<
               {
                 [K in ExtractAlias<RestOfFirst>]: Tables[TableName][ExtractColumnName<RestOfFirst>];
-              },
-              PickWithSanitizedSelectExpressions<Rest, Tables>
+              } & PickWithSanitizedSelectExpressions<Rest, Tables>
             >
           : never
       : never
