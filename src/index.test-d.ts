@@ -35,6 +35,18 @@ describe("SELECT", () => {
     const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users");
     expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
   });
+
+  test("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name", () => {
+    const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name");
+    expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
+  });
+
+  test("SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId", () => {
+    const result = inferReturnTypeFromSqlStatement(
+      "SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId",
+    );
+    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string; title: string }[]>();
+  });
 });
 
 describe("DELETE", () => {
