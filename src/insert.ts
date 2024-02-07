@@ -52,8 +52,24 @@
  * assignment_list:
  *     assignment [, assignment] ...
  * ```
+ *
+ *
+ * Not supported:
+ * - currently only first form is supported
+ * - PARTITION
+ * - alias
+ * - ON DUPLICATE KEY UPDATE
  */
+
+import { Split } from "./utils";
 
 export type IsInsertStatement<Query extends string> = Query extends `INSERT ${string}` ? true : false;
 
 export type ReturnTypeFromInsertStatement = string;
+
+type GetTableNameFromArray<T extends string[]> = T extends [infer First extends string, ...infer Rest extends string[]]
+  ? First extends "INSERT" | "LOW_PRIORITY" | "DELAYED" | "HIGH_PRIORITY" | "IGNORE" | "INTO"
+    ? GetTableNameFromArray<Rest>
+    : First
+  : never;
+export type GetTableName<Query extends string> = GetTableNameFromArray<Split<Query, " ">>;
