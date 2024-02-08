@@ -8,6 +8,10 @@ describe("Tokenize", () => {
 
   test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
     const result = tokenize("INSERT INTO users (id, name) VALUES (?, ?)");
-    expectTypeOf(result).toEqualTypeOf<["INSERT", "INTO", "users", "id", "name", "VALUES", "?", "?"]>();
+    expectTypeOf(result).toEqualTypeOf<
+      ["INSERT", "INTO", "users", "(", "id", "name", ")", "VALUES", "(", "?", "?", ")"]
+    >();
   });
 });
+
+// TODO add more tests
