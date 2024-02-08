@@ -87,34 +87,34 @@ export type Tokenize<S extends string> = FilterOut<
 >;
 
 /**
- * Slice tokens from a token array until a match is found
+ * Returns a new array containing the elements after the first match of a search string
  *
  * @example
- * type T0 = SliceUntilMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
- * type T1 = SliceUntilMatch<["a", "b", "c", "d"], "b">; // ["c", "d"]
+ * type T0 = SliceAfterFirstMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
+ * type T1 = SliceAfterFirstMatch<["a", "b", "c", "d"], "b">; // ["c", "d"]
  */
-export type SliceUntilMatch<Tokens extends string[], Search extends string> = Tokens extends [
+export type SliceAfterFirstMatch<Tokens extends string[], Search extends string> = Tokens extends [
   infer First extends string,
   ...infer Rest extends string[],
 ]
   ? First extends Search
     ? Rest
-    : SliceUntilMatch<Rest, Search>
+    : SliceAfterFirstMatch<Rest, Search>
   : [];
 
 /**
- * Slice tokens from a token array until a match is not found
+ * Returns a new array containing the elements after the first non-match of a search string
  *
  * @example
- * type T0 = SliceUntilNotMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
- * type T1 = SliceUntilNotMatch<["a", "b", "c", "d"], "a" | "b">; // ["c", "d"]
+ * type T0 = SliceFromFirstNonMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
+ * type T1 = SliceFromFirstNonMatch<["a", "b", "c", "d"], "a" | "b">; // ["c", "d"]
  */
-export type SliceUntilNoMatch<Tokens extends string[], Search extends string> = Tokens extends [
+export type SliceFromFirstNonMatch<Tokens extends string[], Search extends string> = Tokens extends [
   infer First extends string,
   ...infer Rest extends string[],
 ]
   ? First extends Search
-    ? SliceUntilNoMatch<Rest, Search>
+    ? SliceFromFirstNonMatch<Rest, Search>
     : Tokens
   : Tokens;
 
