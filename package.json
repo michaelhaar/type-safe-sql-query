@@ -17,6 +17,7 @@
     "vitest": "1.2.2"
   },
   "prettier": {
-    "printWidth": 120
+    "printWidth": 120,
+    "experimentalTernaries": true
   }
 }
