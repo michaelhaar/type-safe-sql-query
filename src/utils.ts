@@ -137,10 +137,24 @@ export type Slice<
     : Slice<Rest, From, To, false, Accumulated>
   : Accumulated;
 
+/**
+ * Overwrite properties of an object with another object
+ *
+ * @example
+ * type T0 = Overwrite<{ a: string, b: number }, { a: number }>; // { a: number, b: number }
+ */
 export type Overwrite<O extends object, O1 extends object> = {
   [K in keyof O]: K extends keyof O1 ? O1[K] : O[K];
 } & {};
 
+/**
+ * Returns a new array containing the elements before the first match of a search string
+ *
+ * @example
+ * type T0 = SliceBeforeFirstMatch<["a", "b", "c", "d"], "a">; // []
+ * type T1 = SliceBeforeFirstMatch<["a", "b", "c", "d"], "c">; // ["a", "b"]
+ * type T2 = SliceBeforeFirstMatch<["a", "b", "c", "d"], "e">; // ["a", "b", "c", "d"]
+ */
 export type SliceBeforeFirstMatch<Tokens extends string[], Search extends string> =
   Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
     First extends Search ?
@@ -148,6 +162,13 @@ export type SliceBeforeFirstMatch<Tokens extends string[], Search extends string
     : [First, ...SliceBeforeFirstMatch<Rest, Search>]
   : Tokens;
 
+/**
+ * Returns a new array containing the elements starting from the first element that matches the search string
+ *
+ * @example
+ * type T0 = SliceFromFirstMatch<["a", "b", "c", "d"], "b">; // ["b", "c", "d"]
+ * type T1 = SliceFromFirstMatch<["a", "b", "c", "d"], "e">; // []
+ */
 export type SliceFromFirstMatch<Tokens extends string[], Search extends string> =
   Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
     First extends Search ?
@@ -155,4 +176,10 @@ export type SliceFromFirstMatch<Tokens extends string[], Search extends string> 
     : SliceFromFirstMatch<Rest, Search>
   : [];
 
+/**
+ * Shift the first element from an array
+ *
+ * @example
+ * type T0 = Shift<["a", "b", "c"]>; // ["b", "c"]
+ */
 export type Shift<Tokens extends string[]> = Tokens extends [infer _First, ...infer Rest] ? Rest : Tokens;
