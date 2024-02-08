@@ -1,18 +1,26 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { GetTableName } from "./insert";
+import { ParseInsertStatement } from "./insert";
 
-describe("GetTableName", () => {
-  function getTableName<T extends string>(query: T): GetTableName<T> {
+describe("ParseInsertStatement", () => {
+  function parseInsertStatement<T extends string>(query: T): ParseInsertStatement<T> {
     return query as any;
   }
 
   test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
-    const result = getTableName("INSERT INTO users (id, name) VALUES (?, ?)");
-    expectTypeOf(result).toEqualTypeOf<"users">();
+    const result = parseInsertStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+    expectTypeOf(result).toEqualTypeOf<{
+      into: "users";
+      columns: ["id", "name"];
+      values: ["?", "?"];
+    }>();
   });
 
   test("INSERT HIGH_PRIORITY users", () => {
-    const result = getTableName("INSERT HIGH_PRIORITY users");
-    expectTypeOf(result).toEqualTypeOf<"users">();
+    const result = parseInsertStatement("INSERT HIGH_PRIORITY users");
+    expectTypeOf(result).toEqualTypeOf<{
+      into: "users";
+      columns: [];
+      values: [];
+    }>();
   });
 });

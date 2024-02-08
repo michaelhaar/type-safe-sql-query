@@ -103,6 +103,22 @@ export type SliceUntilMatch<Tokens extends string[], Search extends string> = To
   : [];
 
 /**
+ * Slice tokens from a token array until a match is not found
+ *
+ * @example
+ * type T0 = SliceUntilNotMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
+ * type T1 = SliceUntilNotMatch<["a", "b", "c", "d"], "a" | "b">; // ["c", "d"]
+ */
+export type SliceUntilNoMatch<Tokens extends string[], Search extends string> = Tokens extends [
+  infer First extends string,
+  ...infer Rest extends string[],
+]
+  ? First extends Search
+    ? SliceUntilNoMatch<Rest, Search>
+    : Tokens
+  : Tokens;
+
+/**
  * Slice tokens from a token array
  *
  * @example
