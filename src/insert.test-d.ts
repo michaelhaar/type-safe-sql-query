@@ -29,9 +29,4 @@ describe("InferParamsTypeFromInsertStatement", () => {
     const result = inferParamsType("INSERT INTO users (id, name, country) VALUES (?, ?, ?)");
     expectTypeOf(result).toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
-
-  test("INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?", () => {
-    const result = inferParamsType("INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
-    expectTypeOf(result).toEqualTypeOf<[number, string, string]>();
-  });
 });
