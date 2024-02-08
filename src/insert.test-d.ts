@@ -1,5 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { ParseInsertStatement } from "./insert";
+import { InferParamsTypeFromInsertStatement } from "./insert";
 
 type TestTables = {
   users: {
@@ -20,18 +20,18 @@ type TestTables = {
   };
 };
 
-describe("ParseInsertStatement", () => {
-  function parseInsertStatement<Q extends string>(query: Q): ParseInsertStatement<Q, TestTables> {
+describe("InferParamsTypeFromInsertStatement", () => {
+  function inferParamsType<Q extends string>(query: Q): InferParamsTypeFromInsertStatement<Q, TestTables> {
     return query as any;
   }
 
   test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
-    const result = parseInsertStatement("INSERT INTO users (id, name, country) VALUES (?, ?, ?)");
+    const result = inferParamsType("INSERT INTO users (id, name, country) VALUES (?, ?, ?)");
     expectTypeOf(result).toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
 
   test("INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?", () => {
-    const result = parseInsertStatement("INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
+    const result = inferParamsType("INSERT INTO users (id, name) VALUES (?, ?) ON DUPLICATE KEY UPDATE name = ?");
     expectTypeOf(result).toEqualTypeOf<[number, string, string]>();
   });
 });
