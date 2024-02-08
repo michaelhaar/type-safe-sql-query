@@ -70,8 +70,8 @@ type FilterKeywordsAndEmptyStrings<Arr extends any[]> = FilterOut<Arr, JoinKeywo
 export type ParseTableReference<TableRef extends string> = FilterKeywordsAndEmptyStrings<SplitBySpace<TableRef>>;
 
 export type ParseTableReferences<TableReferences extends string> =
-  TableReferences extends `${infer FirstTableReference}, ${infer RestTableReferences}`
-    ? [...ParseTableReference<FirstTableReference>, ...ParseTableReferences<RestTableReferences>]
-    : TableReferences extends `${infer FirstTableReference} ${infer RestTableReferences}`
-      ? [...ParseTableReference<FirstTableReference>, ...ParseTableReferences<RestTableReferences>]
-      : [...ParseTableReference<TableReferences>];
+  TableReferences extends `${infer FirstTableReference}, ${infer RestTableReferences}` ?
+    [...ParseTableReference<FirstTableReference>, ...ParseTableReferences<RestTableReferences>]
+  : TableReferences extends `${infer FirstTableReference} ${infer RestTableReferences}` ?
+    [...ParseTableReference<FirstTableReference>, ...ParseTableReferences<RestTableReferences>]
+  : [...ParseTableReference<TableReferences>];

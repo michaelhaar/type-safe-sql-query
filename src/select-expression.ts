@@ -39,41 +39,36 @@ export type ParseSelectExpressions<Query extends string> = Split<Query, ", ">;
  * Sanitizes the `select_expr` part from a `SELECT` statement.
  * e.g SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
  */
-export type SanitizeSelectExpressions<S extends string[], DefaultTableName extends string> = S extends []
-  ? []
-  : S extends [infer First extends string, ...infer Rest extends string[]]
-    ? First extends `${infer _TableName}.${infer _ColumnName}`
-      ? [First, ...SanitizeSelectExpressions<Rest, DefaultTableName>]
-      : [`${DefaultTableName}.${First}`, ...SanitizeSelectExpressions<Rest, DefaultTableName>]
-    : never;
+export type SanitizeSelectExpressions<S extends string[], DefaultTableName extends string> =
+  S extends [] ? []
+  : S extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends `${infer _TableName}.${infer _ColumnName}` ?
+      [First, ...SanitizeSelectExpressions<Rest, DefaultTableName>]
+    : [`${DefaultTableName}.${First}`, ...SanitizeSelectExpressions<Rest, DefaultTableName>]
+  : never;
 
-type ExtractColumnName<S extends string> = S extends `${infer ColumnName1} AS ${string}`
-  ? ColumnName1
-  : S extends `${infer ColumnName2} ${string}`
-    ? ColumnName2
-    : S;
+type ExtractColumnName<S extends string> =
+  S extends `${infer ColumnName1} AS ${string}` ? ColumnName1
+  : S extends `${infer ColumnName2} ${string}` ? ColumnName2
+  : S;
 
-type ExtractAlias<S extends string> = S extends `${string} AS ${infer Alias1}`
-  ? Alias1
-  : S extends `${string} ${infer Alias2}`
-    ? Alias2
-    : S;
+type ExtractAlias<S extends string> =
+  S extends `${string} AS ${infer Alias1}` ? Alias1
+  : S extends `${string} ${infer Alias2}` ? Alias2
+  : S;
 
-export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables> = Queries extends [
-  infer First extends string,
-  ...infer Rest extends string[],
-]
-  ? First extends `${infer TableName}.${infer RestOfFirst}`
-    ? TableName extends keyof Tables
-      ? RestOfFirst extends `*`
-        ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
-        : ExtractColumnName<RestOfFirst> extends keyof Tables[TableName]
-          ? ExpandRecursively<
-              {
-                [K in ExtractAlias<RestOfFirst>]: Tables[TableName][ExtractColumnName<RestOfFirst>];
-              } & PickWithSanitizedSelectExpressions<Rest, Tables>
-            >
-          : never
+export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables> =
+  Queries extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends `${infer TableName}.${infer RestOfFirst}` ?
+      TableName extends keyof Tables ?
+        RestOfFirst extends `*` ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
+        : ExtractColumnName<RestOfFirst> extends keyof Tables[TableName] ?
+          ExpandRecursively<
+            {
+              [K in ExtractAlias<RestOfFirst>]: Tables[TableName][ExtractColumnName<RestOfFirst>];
+            } & PickWithSanitizedSelectExpressions<Rest, Tables>
+          >
+        : never
       : never
     : never
   : {};

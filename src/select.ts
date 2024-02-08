@@ -60,12 +60,12 @@ import { ParseTableReferences } from "./table-references";
 export type IsSelectStatement<Query extends string> = Query extends `SELECT ${string}` ? true : false;
 
 export type ParseSelectStatement<Query extends string> =
-  Query extends `SELECT ${infer SelectExpressionsString} FROM ${infer TableReferencesString}`
-    ? {
-        selectExpressionsString: SelectExpressionsString;
-        tableReferencesString: TableReferencesString;
-      }
-    : never;
+  Query extends `SELECT ${infer SelectExpressionsString} FROM ${infer TableReferencesString}` ?
+    {
+      selectExpressionsString: SelectExpressionsString;
+      tableReferencesString: TableReferencesString;
+    }
+  : never;
 
 export type GetTableNames<Query extends string> = ParseTableReferences<
   ParseSelectStatement<Query>["tableReferencesString"]
