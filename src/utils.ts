@@ -12,9 +12,8 @@ export type TODO = any;
  * type T0 = Split<"a,b,c", ",">; // ["a", "b", "c"]
  * type T1 = Split<"a,b,c", "">; // ["a,b,c"]
  */
-export type Split<S extends string, Delimiter extends string> = S extends `${infer FirstPart}${Delimiter}${infer Rest}`
-  ? [FirstPart, ...Split<Rest, Delimiter>]
-  : [S];
+export type Split<S extends string, Delimiter extends string> =
+  S extends `${infer FirstPart}${Delimiter}${infer Rest}` ? [FirstPart, ...Split<Rest, Delimiter>] : [S];
 
 /**
  * Filter out elements from an array
@@ -23,9 +22,10 @@ export type Split<S extends string, Delimiter extends string> = S extends `${inf
  * type T1 = FilterOut<[1, 2, 3, "a", "b", "c"], string>; // [1, 2, 3]
  * type T2 = FilterOut<[1, 2, 3, "a", "b", "c"], "a" | "b">; // [1, 2, 3, "c"]
  */
-export type FilterOut<Arr extends any[], FilterType> = Arr extends [infer First, ...infer Rest]
-  ? First extends FilterType
-    ? FilterOut<Rest, FilterType>
+export type FilterOut<Arr extends string[], FilterType extends string> =
+  Arr extends [infer First, ...infer Rest extends string[]] ?
+    First extends FilterType ?
+      FilterOut<Rest, FilterType>
     : [First, ...FilterOut<Rest, FilterType>]
   : [];
 
@@ -34,9 +34,10 @@ export type FilterOut<Arr extends any[], FilterType> = Arr extends [infer First,
  * see: https://github.com/microsoft/vscode/issues/94679
  * see: https://stackoverflow.com/a/57683652
  */
-export type ExpandRecursively<T> = T extends object
-  ? T extends infer O
-    ? { [K in keyof O]: ExpandRecursively<O[K]> }
+export type ExpandRecursively<T> =
+  T extends object ?
+    T extends infer O ?
+      { [K in keyof O]: ExpandRecursively<O[K]> }
     : never
   : T;
 
@@ -46,12 +47,8 @@ export type ExpandRecursively<T> = T extends object
  * type T0 = Replace<"a,b,c", ",", "">; // "abc"
  * type T1 = Replace<"a,b,c", ",", "-">; // "a-b-c"
  */
-export type Replace<
-  Input extends string,
-  Search extends string,
-  Replacement extends string,
-> = Input extends `${infer Head}${Search}${infer Tail}`
-  ? `${Head}${Replacement}${Replace<Tail, Search, Replacement>}`
+export type Replace<Input extends string, Search extends string, Replacement extends string> =
+  Input extends `${infer Head}${Search}${infer Tail}` ? `${Head}${Replacement}${Replace<Tail, Search, Replacement>}`
   : Input;
 
 /**
@@ -65,9 +62,10 @@ export type ReplaceMultiple<
   Search extends string[],
   Replacements extends string[],
   Result extends string = Input,
-> = Search extends [infer FirstSearch extends string, ...infer RestSearch extends string[]]
-  ? Replacements extends [infer FirstReplacement extends string, ...infer RestReplacement extends string[]]
-    ? ReplaceMultiple<Replace<Result, FirstSearch, FirstReplacement>, RestSearch, RestReplacement>
+> =
+  Search extends [infer FirstSearch extends string, ...infer RestSearch extends string[]] ?
+    Replacements extends [infer FirstReplacement extends string, ...infer RestReplacement extends string[]] ?
+      ReplaceMultiple<Replace<Result, FirstSearch, FirstReplacement>, RestSearch, RestReplacement>
     : never
   : Result;
 
@@ -93,12 +91,10 @@ export type Tokenize<S extends string> = FilterOut<
  * type T0 = SliceAfterFirstMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
  * type T1 = SliceAfterFirstMatch<["a", "b", "c", "d"], "b">; // ["c", "d"]
  */
-export type SliceAfterFirstMatch<Tokens extends string[], Search extends string> = Tokens extends [
-  infer First extends string,
-  ...infer Rest extends string[],
-]
-  ? First extends Search
-    ? Rest
+export type SliceAfterFirstMatch<Tokens extends string[], Search extends string> =
+  Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends Search ?
+      Rest
     : SliceAfterFirstMatch<Rest, Search>
   : [];
 
@@ -109,12 +105,10 @@ export type SliceAfterFirstMatch<Tokens extends string[], Search extends string>
  * type T0 = SliceFromFirstNonMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
  * type T1 = SliceFromFirstNonMatch<["a", "b", "c", "d"], "a" | "b">; // ["c", "d"]
  */
-export type SliceFromFirstNonMatch<Tokens extends string[], Search extends string> = Tokens extends [
-  infer First extends string,
-  ...infer Rest extends string[],
-]
-  ? First extends Search
-    ? SliceFromFirstNonMatch<Rest, Search>
+export type SliceFromFirstNonMatch<Tokens extends string[], Search extends string> =
+  Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends Search ?
+      SliceFromFirstNonMatch<Rest, Search>
     : Tokens
   : Tokens;
 
@@ -132,14 +126,33 @@ export type Slice<
   To extends string,
   InSlice extends boolean = false,
   Accumulated extends any[] = [],
-> = Tokens extends [infer First, ...infer Rest]
-  ? First extends From
-    ? Slice<Rest, From, To, true, Accumulated>
-    : First extends To
-      ? InSlice extends true
-        ? Accumulated
-        : Slice<Rest, From, To, false, Accumulated>
-      : InSlice extends true
-        ? Slice<Rest, From, To, true, [...Accumulated, First]>
-        : Slice<Rest, From, To, false, Accumulated>
+> =
+  Tokens extends [infer First, ...infer Rest] ?
+    First extends From ? Slice<Rest, From, To, true, Accumulated>
+    : First extends To ?
+      InSlice extends true ?
+        Accumulated
+      : Slice<Rest, From, To, false, Accumulated>
+    : InSlice extends true ? Slice<Rest, From, To, true, [...Accumulated, First]>
+    : Slice<Rest, From, To, false, Accumulated>
   : Accumulated;
+
+export type Overwrite<O extends object, O1 extends object> = {
+  [K in keyof O]: K extends keyof O1 ? O1[K] : O[K];
+} & {};
+
+export type SliceBeforeFirstMatch<Tokens extends string[], Search extends string> =
+  Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends Search ?
+      []
+    : [First, ...SliceBeforeFirstMatch<Rest, Search>]
+  : Tokens;
+
+export type SliceFromFirstMatch<Tokens extends string[], Search extends string> =
+  Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends Search ?
+      [First, ...Rest]
+    : SliceFromFirstMatch<Rest, Search>
+  : [];
+
+export type Shift<Tokens extends string[]> = Tokens extends [infer _First, ...infer Rest] ? Rest : Tokens;
