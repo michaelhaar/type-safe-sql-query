@@ -70,12 +70,13 @@ describe("INSERT", () => {
     });
   });
 
-  describe("inferParamsType", () => {
-    test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
-      const result = inferParamsTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (?, ?)");
-      expectTypeOf(result).toEqualTypeOf<[number, string]>();
-    });
+  // TODO: Uncomment this test on next vitest release
+  // describe("inferParamsType", () => {
+  test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
+    const result = inferParamsTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+    expectTypeOf(result).toEqualTypeOf<[number, string]>();
   });
+  // });
 });
 
 describe("UPDATE", () => {
