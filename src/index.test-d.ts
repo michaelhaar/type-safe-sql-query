@@ -1,5 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { InferReturnTypeFromSqlStatement } from "./index";
+import { InferParamsTypeFromSqlStatement, InferReturnTypeFromSqlStatement } from "./index";
 
 type TestTables = {
   users: {
@@ -22,6 +22,12 @@ type TestTables = {
 function inferReturnTypeFromSqlStatement<Query extends string>(
   query: Query,
 ): InferReturnTypeFromSqlStatement<Query, TestTables> {
+  return query as any;
+}
+
+function inferParamsTypeFromSqlStatement<Query extends string>(
+  query: Query,
+): InferParamsTypeFromSqlStatement<Query, TestTables> {
   return query as any;
 }
 
@@ -57,9 +63,18 @@ describe("DELETE", () => {
 });
 
 describe("INSERT", () => {
-  test("INSERT INTO users (id, name) VALUES (1, 'Alice')", () => {
-    const result = inferReturnTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (1, 'Alice')");
-    expectTypeOf(result).toEqualTypeOf<string>();
+  describe("inferReturnType", () => {
+    test("INSERT INTO users (id, name) VALUES (1, 'Alice')", () => {
+      const result = inferReturnTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (1, 'Alice')");
+      expectTypeOf(result).toEqualTypeOf<string>();
+    });
+  });
+
+  describe("inferParamsType", () => {
+    test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
+      const result = inferParamsTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (?, ?)");
+      expectTypeOf(result).toEqualTypeOf<[number, string]>();
+    });
   });
 });
 
