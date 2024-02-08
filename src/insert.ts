@@ -61,15 +61,16 @@
  * - ON DUPLICATE KEY UPDATE
  */
 
-import { Split } from "./utils";
+import { ExpandRecursively, FilterOut, Slice, SliceFromFirstNonMatch, Tokenize } from "./utils";
 
 export type IsInsertStatement<Query extends string> = Query extends `INSERT ${string}` ? true : false;
 
 export type ReturnTypeFromInsertStatement = string;
 
-type GetTableNameFromArray<T extends string[]> = T extends [infer First extends string, ...infer Rest extends string[]]
-  ? First extends "INSERT" | "LOW_PRIORITY" | "DELAYED" | "HIGH_PRIORITY" | "IGNORE" | "INTO"
-    ? GetTableNameFromArray<Rest>
-    : First
-  : never;
-export type GetTableName<Query extends string> = GetTableNameFromArray<Split<Query, " ">>;
+export type InsertParser<tokens extends string[]> = {
+  into: SliceFromFirstNonMatch<tokens, "INSERT" | "LOW_PRIORITY" | "DELAYED" | "HIGH_PRIORITY" | "IGNORE" | "INTO">[0];
+  columns: FilterOut<Slice<tokens, "(", "VALUES" | "VALUE">, "(" | ")">;
+  values: FilterOut<Slice<tokens, "VALUES" | "VALUE", "AS" | "ON">, "(" | ")">;
+};
+
+export type ParseInsertStatement<Query extends string> = ExpandRecursively<InsertParser<Tokenize<Query>>>;
