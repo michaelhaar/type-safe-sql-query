@@ -22,7 +22,7 @@
  * - Alias
  */
 
-import { InferParamsType } from "./insert";
+import { InferParamsType } from "./utils";
 import {
   ExpandRecursively,
   Overwrite,

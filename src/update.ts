@@ -25,7 +25,7 @@
  * ```
  */
 
-import { InferParamsType } from "./insert";
+import { InferParamsType } from "./utils";
 import { ExpandRecursively, Overwrite, Shift, Slice, SliceFromFirstNonMatch, TODO, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 

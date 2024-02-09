@@ -185,3 +185,12 @@ export type SliceFromFirstMatch<Tokens extends string[], Search extends string> 
  * type T0 = Shift<["a", "b", "c"]>; // ["b", "c"]
  */
 export type Shift<Tokens extends string[]> = Tokens extends [infer _First, ...infer Rest] ? Rest : Tokens;
+
+export type InferParamsType<Table extends string, ParamColumns extends string[], Tables> =
+  Table extends keyof Tables ?
+    ParamColumns extends [infer First, ...infer Rest extends string[]] ?
+      First extends keyof Tables[Table] ?
+        [Tables[Table][First], ...InferParamsType<Table, Rest, Tables>]
+      : [never, ...InferParamsType<Table, Rest, Tables>]
+    : []
+  : [];

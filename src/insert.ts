@@ -64,6 +64,7 @@
 import {
   ExpandRecursively,
   FilterOut,
+  InferParamsType,
   Overwrite,
   Shift,
   Slice,
@@ -78,6 +79,7 @@ export type IsInsertStatement<Query extends string> = Query extends `INSERT ${st
 
 export type ReturnTypeFromInsertStatement = string;
 
+// TODO: rename?
 type GetParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
   Values extends [infer FirstValue extends string, ...infer RestValues extends string[]] ?
     Columns extends [infer FirstColumn extends string, ...infer RestColumns extends string[]] ?
@@ -86,16 +88,6 @@ type GetParamColumns<Columns extends string[], Values extends string[], ParamCol
       : GetParamColumns<RestColumns, RestValues, ParamColumns>
     : ParamColumns
   : ParamColumns;
-
-// TODO: move to utils?
-export type InferParamsType<Table extends string, ParamColumns extends string[], Tables> =
-  Table extends keyof Tables ?
-    ParamColumns extends [infer First, ...infer Rest extends string[]] ?
-      First extends keyof Tables[Table] ?
-        [Tables[Table][First], ...InferParamsType<Table, Rest, Tables>]
-      : [never, ...InferParamsType<Table, Rest, Tables>]
-    : []
-  : [];
 
 type InsertAst = {
   query: string;
