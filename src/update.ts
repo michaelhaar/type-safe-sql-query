@@ -27,7 +27,7 @@
 
 import { InferParamsType } from "./insert";
 import { ExpandRecursively, Overwrite, Shift, Slice, SliceFromFirstNonMatch, TODO, Tokenize } from "./utils";
-import { ParseParamsFromWhereConditionTokens } from "./where-condition";
+import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsUpdateStatement<Query extends string> = Query extends `UPDATE ${string}` ? true : false;
 
@@ -118,7 +118,7 @@ type Parse<
     : Ast["index"] extends 5 ?
       Parse<
         {
-          paramColumns: [...Ast["paramColumns"], ...ParseParamsFromWhereConditionTokens<Ast["whereClauseTokens"]>];
+          paramColumns: [...Ast["paramColumns"], ...ParseParamsFromWhereClauseTokens<Ast["whereClauseTokens"]>];
           index: 100;
         },
         Ast

@@ -33,7 +33,7 @@ import {
   TODO,
   Tokenize,
 } from "./utils";
-import { ParseParamsFromWhereConditionTokens } from "./where-condition";
+import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsDeleteStatement<Query extends string> = Query extends `DELETE ${infer _Rest}` ? true : false;
 
@@ -101,7 +101,7 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          paramColumns: ParseParamsFromWhereConditionTokens<Ast["whereConditionTokens"]>;
+          paramColumns: ParseParamsFromWhereClauseTokens<Ast["whereConditionTokens"]>;
           index: 100;
         },
         Ast

@@ -31,18 +31,18 @@ type LogicalOperator = "AND" | "OR";
 //   a. first token is a column name?
 //   b. if one of the other tokens is a question mark, then add column name to result array
 // 3. return the result array
-export type ParseParamsFromWhereConditionTokens<
+export type ParseParamsFromWhereClauseTokens<
   WhereConditionTokens extends string[],
   ColumnName extends string | null = null,
   Params extends string[] = [],
 > =
   WhereConditionTokens extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends LogicalOperator ? ParseParamsFromWhereConditionTokens<Rest, null, Params>
-    : ColumnName extends null ? ParseParamsFromWhereConditionTokens<Rest, First, Params>
+    First extends LogicalOperator ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
+    : ColumnName extends null ? ParseParamsFromWhereClauseTokens<Rest, First, Params>
     : ColumnName extends string ?
-      First extends "?" ? ParseParamsFromWhereConditionTokens<Rest, ColumnName, [...Params, ColumnName]>
-      : First extends LogicalOperator ? ParseParamsFromWhereConditionTokens<Rest, null, Params>
-      : ParseParamsFromWhereConditionTokens<Rest, ColumnName, Params>
+      First extends "?" ? ParseParamsFromWhereClauseTokens<Rest, ColumnName, [...Params, ColumnName]>
+      : First extends LogicalOperator ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
+      : ParseParamsFromWhereClauseTokens<Rest, ColumnName, Params>
     : never
   : Params;
 
