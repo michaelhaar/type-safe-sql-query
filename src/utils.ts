@@ -119,6 +119,8 @@ export type SliceFromFirstNonMatch<Tokens extends string[], Search extends strin
  * type T0 = Slice<["a", "b", "c", "d"], "b", "c">; // []
  * type T1 = Slice<["a", "b", "c", "d"], "b", "d">; // ["c"]
  * type T2 = Slice<["a", "b", "c", "d"], "b", "e">; // ["c", "d"]
+ *
+ * @todo rename to SliceBetween
  */
 export type Slice<
   Tokens extends any[],

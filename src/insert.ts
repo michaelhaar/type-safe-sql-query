@@ -87,7 +87,8 @@ type GetParamColumns<Columns extends string[], Values extends string[], ParamCol
     : ParamColumns
   : ParamColumns;
 
-type InferParamsType<Table extends string, ParamColumns extends string[], Tables> =
+// TODO: move to utils?
+export type InferParamsType<Table extends string, ParamColumns extends string[], Tables> =
   Table extends keyof Tables ?
     ParamColumns extends [infer First, ...infer Rest extends string[]] ?
       First extends keyof Tables[Table] ?
@@ -173,11 +174,11 @@ type Parse<
       Parse<
         {
           paramColumns: GetParamColumns<Ast["columns"], Ast["values"]>;
-          index: 6;
+          index: 100;
         },
         Ast
       >
-    : Ast["index"] extends 6 ?
+    : Ast["index"] extends 100 ?
       {
         inferredParamsType: InferParamsType<Ast["into"], Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: ReturnTypeFromInsertStatement;
