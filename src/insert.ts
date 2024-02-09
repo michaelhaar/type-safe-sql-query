@@ -102,7 +102,7 @@ type InsertAst = {
   tables: TODO;
   tokens: string[];
   index: number;
-  into: string; // TODO: rename to tblName
+  tblName: string;
   columns: string[];
   values: string[];
   paramColumns: string[];
@@ -115,7 +115,7 @@ type Parse<
     tables: TODO;
     tokens: [];
     index: 0;
-    into: "";
+    tblName: "";
     columns: [];
     values: [];
     paramColumns: [];
@@ -146,7 +146,7 @@ type Parse<
     : Ast["index"] extends 2 ?
       Parse<
         {
-          into: Ast["tokens"][0];
+          tblName: Ast["tokens"][0];
           tokens: Shift<Ast["tokens"]>;
           index: 3;
         },
@@ -180,7 +180,7 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["into"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: ReturnTypeFromInsertStatement;
         ast: Ast;
       }
