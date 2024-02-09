@@ -22,7 +22,7 @@
  * - Alias
  */
 
-import { InferParamsType } from "./insert";
+import { InferParamsType } from "./utils";
 import {
   ExpandRecursively,
   Overwrite,
@@ -33,7 +33,7 @@ import {
   TODO,
   Tokenize,
 } from "./utils";
-import { ParseParamsFromWhereConditionTokens } from "./where-condition";
+import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsDeleteStatement<Query extends string> = Query extends `DELETE ${infer _Rest}` ? true : false;
 
@@ -44,8 +44,8 @@ type DeleteAst = {
   tables: TODO;
   tokens: string[];
   index: number;
-  from: string;
-  whereConditionTokens: string[];
+  tblName: string;
+  whereClauseTokens: string[];
   paramColumns: string[];
 };
 
@@ -56,8 +56,8 @@ type Parse<
     tables: TODO;
     tokens: [];
     index: 0;
-    from: "";
-    whereConditionTokens: [];
+    tblName: "";
+    whereClauseTokens: [];
     paramColumns: [];
   },
 > =
@@ -83,7 +83,7 @@ type Parse<
     : Ast["index"] extends 2 ?
       Parse<
         {
-          from: Ast["tokens"][0];
+          tblName: Ast["tokens"][0];
           tokens: Shift<Ast["tokens"]>;
           index: 3;
         },
@@ -92,7 +92,7 @@ type Parse<
     : Ast["index"] extends 3 ?
       Parse<
         {
-          whereConditionTokens: Slice<Ast["tokens"], "WHERE", "ORDER BY" | "LIMIT">;
+          whereClauseTokens: Slice<Ast["tokens"], "WHERE", "ORDER BY" | "LIMIT">;
           tokens: SliceFromFirstMatch<Ast["tokens"], "WHERE">;
           index: 4;
         },
@@ -101,14 +101,14 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          paramColumns: ParseParamsFromWhereConditionTokens<Ast["whereConditionTokens"]>;
+          paramColumns: ParseParamsFromWhereClauseTokens<Ast["whereClauseTokens"]>;
           index: 100;
         },
         Ast
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["from"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: ReturnTypeFromDeleteStatement;
         ast: Ast;
       }

@@ -64,6 +64,7 @@
 import {
   ExpandRecursively,
   FilterOut,
+  InferParamsType,
   Overwrite,
   Shift,
   Slice,
@@ -78,6 +79,7 @@ export type IsInsertStatement<Query extends string> = Query extends `INSERT ${st
 
 export type ReturnTypeFromInsertStatement = string;
 
+// TODO: rename?
 type GetParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
   Values extends [infer FirstValue extends string, ...infer RestValues extends string[]] ?
     Columns extends [infer FirstColumn extends string, ...infer RestColumns extends string[]] ?
@@ -87,22 +89,12 @@ type GetParamColumns<Columns extends string[], Values extends string[], ParamCol
     : ParamColumns
   : ParamColumns;
 
-// TODO: move to utils?
-export type InferParamsType<Table extends string, ParamColumns extends string[], Tables> =
-  Table extends keyof Tables ?
-    ParamColumns extends [infer First, ...infer Rest extends string[]] ?
-      First extends keyof Tables[Table] ?
-        [Tables[Table][First], ...InferParamsType<Table, Rest, Tables>]
-      : [never, ...InferParamsType<Table, Rest, Tables>]
-    : []
-  : [];
-
 type InsertAst = {
   query: string;
   tables: TODO;
   tokens: string[];
   index: number;
-  into: string;
+  tblName: string;
   columns: string[];
   values: string[];
   paramColumns: string[];
@@ -115,7 +107,7 @@ type Parse<
     tables: TODO;
     tokens: [];
     index: 0;
-    into: "";
+    tblName: "";
     columns: [];
     values: [];
     paramColumns: [];
@@ -146,7 +138,7 @@ type Parse<
     : Ast["index"] extends 2 ?
       Parse<
         {
-          into: Ast["tokens"][0];
+          tblName: Ast["tokens"][0];
           tokens: Shift<Ast["tokens"]>;
           index: 3;
         },
@@ -180,7 +172,7 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["into"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: ReturnTypeFromInsertStatement;
         ast: Ast;
       }

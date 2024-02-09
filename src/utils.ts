@@ -185,3 +185,19 @@ export type SliceFromFirstMatch<Tokens extends string[], Search extends string> 
  * type T0 = Shift<["a", "b", "c"]>; // ["b", "c"]
  */
 export type Shift<Tokens extends string[]> = Tokens extends [infer _First, ...infer Rest] ? Rest : Tokens;
+
+/**
+ * Pick types from the `Tables` type
+ *
+ * @example
+ * type T0 = PickFromTables<"users", ["id", "name"], { users: { id: number, name: string, age: number } }>; // [number, string]
+ * type T1 = PickFromTables<"users", ["id", "age"], { users: { id: number, name: string, age: number } }>; // [number, number]
+ */
+export type InferParamsType<TblName extends string, ParamColumns extends string[], Tables> =
+  TblName extends keyof Tables ?
+    ParamColumns extends [infer First, ...infer Rest extends string[]] ?
+      First extends keyof Tables[TblName] ?
+        [Tables[TblName][First], ...InferParamsType<TblName, Rest, Tables>]
+      : [never, ...InferParamsType<TblName, Rest, Tables>]
+    : []
+  : [];
