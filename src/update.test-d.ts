@@ -1,4 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
+import { InferParamsTypeFromUpdateStatement } from "./update";
 
 type TestTables = {
   users: {
