@@ -60,6 +60,11 @@ describe("DELETE", () => {
     const result = inferReturnTypeFromSqlStatement("DELETE FROM users");
     expectTypeOf(result).toEqualTypeOf<string>();
   });
+
+  test("DELETE FROM users WHERE id = ? AND name = ?", () => {
+    const result = inferParamsTypeFromSqlStatement("DELETE FROM users WHERE id = ? AND name = ?");
+    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+  });
 });
 
 describe("INSERT", () => {
