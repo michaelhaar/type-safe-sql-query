@@ -56,11 +56,13 @@ describe("SELECT", () => {
 });
 
 describe("DELETE", () => {
+  // TODO: add `describe` block for `inferReturnType` on next vitest release
   test("DELETE FROM users", () => {
     const result = inferReturnTypeFromSqlStatement("DELETE FROM users");
     expectTypeOf(result).toEqualTypeOf<string>();
   });
 
+  // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("DELETE FROM users WHERE id = ? AND name = ?", () => {
     const result = inferParamsTypeFromSqlStatement("DELETE FROM users WHERE id = ? AND name = ?");
     expectTypeOf(result).toEqualTypeOf<[number, string]>();
@@ -75,18 +77,23 @@ describe("INSERT", () => {
     });
   });
 
-  // TODO: Uncomment this test on next vitest release
-  // describe("inferParamsType", () => {
+  // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
     const result = inferParamsTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (?, ?)");
     expectTypeOf(result).toEqualTypeOf<[number, string]>();
   });
-  // });
 });
 
 describe("UPDATE", () => {
+  // TODO: add `describe` block for `inferReturnType` on next vitest release
   test("UPDATE users SET name = 'Bob' WHERE id = 1", () => {
     const result = inferReturnTypeFromSqlStatement("UPDATE users SET name = 'Bob' WHERE id = 1");
     expectTypeOf(result).toEqualTypeOf<string>();
+  });
+
+  // TODO: add `describe` block for `inferParamsType` on next vitest release
+  test("UPDATE users SET name = ? WHERE id = ?", () => {
+    const result = inferParamsTypeFromSqlStatement("UPDATE users SET name = ? WHERE id = ?");
+    expectTypeOf(result).toEqualTypeOf<[string, number]>();
   });
 });
