@@ -33,6 +33,12 @@ export type IsUpdateStatement<Query extends string> = Query extends `UPDATE ${st
 
 export type ReturnTypeFromUpdateStatement = string;
 
+/**
+ * Parse the parameters from the SET clause tokens
+ *
+ * @example
+ * type T0 = ParseParamsFromSetClauseTokens<["col1", "=", "?", ",", "col2", "=", "?"]>; // ["col1", "col2"]
+ */
 type ParseParamsFromSetClauseTokens<
   Tokens extends string[],
   ColumnName extends string = "",
