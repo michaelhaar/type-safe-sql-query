@@ -102,7 +102,7 @@ type InsertAst = {
   tables: TODO;
   tokens: string[];
   index: number;
-  into: string;
+  into: string; // TODO: rename to tblName
   columns: string[];
   values: string[];
   paramColumns: string[];

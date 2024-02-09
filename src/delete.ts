@@ -44,7 +44,7 @@ type DeleteAst = {
   tables: TODO;
   tokens: string[];
   index: number;
-  from: string;
+  from: string; // TODO: rename to tblName
   whereConditionTokens: string[];
   paramColumns: string[];
 };
