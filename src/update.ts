@@ -33,6 +33,17 @@ export type IsUpdateStatement<Query extends string> = Query extends `UPDATE ${st
 
 export type ReturnTypeFromUpdateStatement = string;
 
+type ParseParamsFromSetClauseTokens<
+  Tokens extends string[],
+  ColumnName extends string = "",
+  Params extends string[] = [],
+> =
+  Tokens extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends "?" ? ParseParamsFromSetClauseTokens<Rest, ColumnName, [...Params, ColumnName]>
+    : Rest extends ["=", ...infer Rest2 extends string[]] ? ParseParamsFromSetClauseTokens<Rest2, First, Params>
+    : ParseParamsFromSetClauseTokens<Rest, ColumnName, Params>
+  : Params;
+
 type UpdateAst = {
   query: string;
   tables: TODO;
@@ -99,6 +110,7 @@ type Parse<
         {
           whereClauseTokens: Slice<Ast["tokens"], "WHERE", "ORDER" | "LIMIT">;
           tokens: SliceFromFirstNonMatch<Ast["tokens"], "ORDER" | "LIMIT">;
+          paramColumns: ParseParamsFromSetClauseTokens<Ast["setClauseTokens"]>;
           index: 5;
         },
         Ast
@@ -106,7 +118,7 @@ type Parse<
     : Ast["index"] extends 5 ?
       Parse<
         {
-          paramColumns: ParseParamsFromWhereConditionTokens<Ast["whereClauseTokens"]>;
+          paramColumns: [...Ast["paramColumns"], ...ParseParamsFromWhereConditionTokens<Ast["whereClauseTokens"]>];
           index: 100;
         },
         Ast
