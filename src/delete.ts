@@ -45,7 +45,7 @@ type DeleteAst = {
   tokens: string[];
   index: number;
   tblName: string;
-  whereClauseTokens: string[]; //
+  whereClauseTokens: string[];
   paramColumns: string[];
 };
 
