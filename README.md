@@ -24,7 +24,9 @@
 - ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
 - ✅ **Simple and familiar**
 
-# Roadmap / Current Status
+## Roadmap / Current Status
+
+> ⚠️ Please note that this project is in a very early stage and is not yet ready for production use.
 
 The MVP of this project is to support basic CRUD operations on a single table. The following is a list features that are already implemented or are planned to be implemented.
 
@@ -34,7 +36,7 @@ Legend:
 - 🏗️: In Progress
 - ✅: Done
 
-## InferReturnTypeFromSqlStatement
+### InferReturnTypeFromSqlStatement
 
 | Feature                         | Status |
 | ------------------------------- | ------ |
@@ -43,7 +45,7 @@ Legend:
 | Support for `DELETE` statements | ✅     |
 | Support for `SELECT` statements | 🏗️     |
 
-## InferParamsTypeFromSqlStatement
+### InferParamsTypeFromSqlStatement
 
 | Feature                         | Status |
 | ------------------------------- | ------ |
@@ -51,6 +53,8 @@ Legend:
 | Support for `UPDATE` statements | ✅     |
 | Support for `DELETE` statements | ✅     |
 | Support for `SELECT` statements | 🏗️     |
+
+For more details please check the source code and the test files.
 
 ## Installation
 
