@@ -181,7 +181,7 @@ type Parse<
     : Ast["index"] extends 100 ?
       {
         inferredParamsType: InferParamsType2<Ast["paramColumns"], Ast["tables"]>;
-        inferredReturnType: ReturnTypeFromUpdateStatement;
+        inferredReturnType: TODO;
         ast: Ast;
       }
     : never

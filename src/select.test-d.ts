@@ -139,6 +139,13 @@ describe("InferParamsTypeFromSelectStatement", () => {
 
   test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
     const result = inferParamsType("SELECT * FROM users WHERE id = ? AND name = ?");
-    expectTypeOf(result).toEqualTypeOf<[string, string]>();
+    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+  });
+
+  test("SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?", () => {
+    const result = inferParamsType(
+      "SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?",
+    );
+    expectTypeOf(result).toEqualTypeOf<[number, string]>();
   });
 });
