@@ -28,13 +28,13 @@ Feel free to be creative and use them however you like.
 
 ## Features
 
-- ✅ DB as **single source of truth** => no schema drift.
-- ✅ **Automatic type-safe** SQL queries.
+- ✅ **Automatic type inference** from SQL statements.
 - ✅ **No compilation** step
-- ✅ **No runtime overhead**.
+- ✅ **No runtime overhead**. 🏎️
 - ✅ **Zero dependencies.**
-- ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
-- ✅ **Simple and familiar**
+- ✅ Minimalistic and **easy to use**.
+- ✅ **Well-tested**
+- ✅ MIT License
 
 ## Roadmap / Current Status
 
