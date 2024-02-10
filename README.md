@@ -131,7 +131,7 @@ const connection = await mysql.createConnection({
 });
 
 // Create a type-safe query wrapper
-async function queryWrapper<S extends string>(
+async function query<S extends string>(
   sql: S,
   params: InferParamsTypeFromSqlStatement<S, Tables>,
 ): InferReturnTypeFromSqlStatement<S, Tables> {
@@ -140,7 +140,7 @@ async function queryWrapper<S extends string>(
 }
 
 // Use the type-safe query wrapper to query the database.
-const users = await queryWrapper("SELECT * FROM users WHERE name = ? AND age > ?", ["Michael", 36]);
+const users = await query("SELECT * FROM users WHERE name = ? AND age > ?", ["Michael", 36]);
 ```
 
 Other low level database drivers like [mysql](https://github.com/mysqljs/mysql), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/) should work similarly.
