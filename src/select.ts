@@ -58,7 +58,7 @@ import {
 import { ParseTableReferences } from "./table-references";
 import {
   ExpandRecursively,
-  InferParamsType,
+  InferParamsType2,
   Overwrite,
   Slice,
   SliceBeforeFirstMatch,
@@ -166,13 +166,21 @@ type Parse<
       Parse<
         {
           paramColumns: ParseParamsFromWhereClauseTokens<Ast["whereClauseTokens"]>;
+          index: 4;
+        },
+        Ast
+      >
+    : Ast["index"] extends 4 ?
+      Parse<
+        {
+          paramColumns: SanitizeSelectExpressions<Ast["paramColumns"], Ast["tableRefTokens"][0]>;
           index: 100;
         },
         Ast
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType2<Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: ReturnTypeFromUpdateStatement;
         ast: Ast;
       }
@@ -180,6 +188,5 @@ type Parse<
   : never;
 
 export type InferParamsTypeFromSelectStatement<Query extends string, Tables extends TODO> = ExpandRecursively<
-  // Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
-  Parse<{ query: Query; tables: Tables }>
+  Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
 >;
