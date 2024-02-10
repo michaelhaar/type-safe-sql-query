@@ -10,9 +10,21 @@
   <a href="/">FAQ</a> -->
 </div>
 
-## What is type-safe-sql-query?
+## About type-safe-sql-query
 
-`type-safe-sql-query` is a **type-safe** SQL query wrapper for TypeScript. It's a **zero dependency** library that uses the database as the **single source of truth**.
+`type-safe-sql-query` provides two well-tested util types
+
+- `InferReturnTypeFromSqlStatement`
+- `InferParamsTypeFromSqlStatement`
+
+that allow us to automatically infer the return type and the parameter type of a SQL statement. e.g.:
+
+```ts
+type T0 = InferReturnTypeFromSqlStatement<"SELECT * FROM users", Tables>;
+// => { id: number, name: string, age: number, email: string }[]
+```
+
+Feel free to be creative and use them however you like.
 
 ## Features
 
