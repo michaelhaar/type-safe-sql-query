@@ -10,7 +10,7 @@
   <a href="/">FAQ</a> -->
 </div>
 
-## About type-safe-sql-query
+## About
 
 `type-safe-sql-query` provides two well-tested util types
 
