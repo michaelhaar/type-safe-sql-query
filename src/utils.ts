@@ -201,3 +201,21 @@ export type InferParamsType<TblName extends string, ParamColumns extends string[
       : [never, ...InferParamsType<TblName, Rest, Tables>]
     : []
   : [];
+
+/**
+ * Pick types from the `Tables` type
+ *
+ * @example
+ * type T0 = InferParamsType2<["users.id", "users.name"], { users: { id: number, name: string, age: number } }>; // [number, string]
+ * type T1 = InferParamsType2<["users.id", "users.age"], { users: { id: number, name: string, age: number } }>; // [number, number]
+ */
+export type InferParamsType2<ParamColumns extends string[], Tables> =
+  ParamColumns extends [infer First, ...infer Rest extends string[]] ?
+    First extends `${infer TblName}.${infer ColumnName}` ?
+      TblName extends keyof Tables ?
+        ColumnName extends keyof Tables[TblName] ?
+          [Tables[TblName][ColumnName], ...InferParamsType2<Rest, Tables>]
+        : [never, ...InferParamsType2<Rest, Tables>]
+      : [never, ...InferParamsType2<Rest, Tables>]
+    : []
+  : [];

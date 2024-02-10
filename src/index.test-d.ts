@@ -53,6 +53,14 @@ describe("SELECT", () => {
     );
     expectTypeOf(result).toEqualTypeOf<{ id: number; name: string; title: string }[]>();
   });
+
+  // TODO: add `describe` block for `inferParamsType` on next vitest release
+  test("SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?", () => {
+    const result = inferParamsTypeFromSqlStatement(
+      "SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?",
+    );
+    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+  });
 });
 
 describe("DELETE", () => {
