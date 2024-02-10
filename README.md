@@ -145,7 +145,7 @@ const users = await queryWrapper("SELECT * FROM users WHERE name = ? AND age > ?
 
 Other low level database drivers like [mysql](https://github.com/mysqljs/mysql), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/) should work similarly.
 
-## Why?
+## Why did we build this?
 
 - ORMs and SQL Query Builders tend to be leaky abstractions. => Many people prefer writing SQL directly.
 - ORMs and SQL Query Builders do not use the database as the source of truth. => Potential schema drift.
@@ -220,16 +220,3 @@ Most ORMs (like Prisma, TypeORM and Drizzle for example) use TypeScript as the s
 - and TypeORM uses `Entities` which are classes that map to a database tables.
 
 In contrast to the choices made by the ORMs mentioned above, I think it's quite obvious that the database should be the source of truth. It's the only place where the data is stored and TypeScript is a consumer of that data and thus should infer the types from the database.
-
-## Why Open Source?
-
-See:
-
-- [Why do Open Source](https://www.youtube.com/shorts/lMlhkWYe5qc)
-- [Don't Contribute to Open Source](https://youtu.be/5nY_cy8zcO4?feature=shared)
-
-TLDR: I had a pain point and I wanted to solve it. I'm not sure if this is the best solution but I'm willing to give it a try.
-
-## TODO:
-
-- [ ] Add comparison with [pgTyped](https://github.com/adelsz/pgtyped) and [ts-mysql-plugin](https://github.com/segmentio/ts-mysql-plugin) and [sqlx-ts](https://github.com/JasonShin/sqlx-ts)
