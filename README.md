@@ -6,7 +6,7 @@
   <a href="https://codesandbox.io/p/devbox/type-safe-sql-query-demo-9g7dly?layout=%257B%2522sidebarPanel%2522%253A%2522EXPLORER%2522%252C%2522rootPanelGroup%2522%253A%257B%2522direction%2522%253A%2522horizontal%2522%252C%2522contentType%2522%253A%2522UNKNOWN%2522%252C%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522id%2522%253A%2522ROOT_LAYOUT%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522UNKNOWN%2522%252C%2522direction%2522%253A%2522vertical%2522%252C%2522id%2522%253A%2522cls3bnup100063b6h1wdkn9p6%2522%252C%2522sizes%2522%253A%255B70%252C30%255D%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522EDITOR%2522%252C%2522direction%2522%253A%2522horizontal%2522%252C%2522id%2522%253A%2522EDITOR%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522EDITOR%2522%252C%2522id%2522%253A%2522cls3bnup100023b6htvz9kv1b%2522%257D%255D%257D%252C%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522SHELLS%2522%252C%2522direction%2522%253A%2522horizontal%2522%252C%2522id%2522%253A%2522SHELLS%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522SHELLS%2522%252C%2522id%2522%253A%2522cls3bnup100043b6hhpkd4mhz%2522%257D%255D%252C%2522sizes%2522%253A%255B100%255D%257D%255D%257D%252C%257B%2522type%2522%253A%2522PANEL_GROUP%2522%252C%2522contentType%2522%253A%2522DEVTOOLS%2522%252C%2522direction%2522%253A%2522vertical%2522%252C%2522id%2522%253A%2522DEVTOOLS%2522%252C%2522panels%2522%253A%255B%257B%2522type%2522%253A%2522PANEL%2522%252C%2522contentType%2522%253A%2522DEVTOOLS%2522%252C%2522id%2522%253A%2522cls3bnup100053b6hke9t9lg9%2522%257D%255D%252C%2522sizes%2522%253A%255B100%255D%257D%255D%252C%2522sizes%2522%253A%255B100%252C0%255D%257D%252C%2522tabbedPanels%2522%253A%257B%2522cls3bnup100023b6htvz9kv1b%2522%253A%257B%2522id%2522%253A%2522cls3bnup100023b6htvz9kv1b%2522%252C%2522tabs%2522%253A%255B%255D%257D%252C%2522cls3bnup100053b6hke9t9lg9%2522%253A%257B%2522id%2522%253A%2522cls3bnup100053b6hke9t9lg9%2522%252C%2522tabs%2522%253A%255B%255D%257D%252C%2522cls3bnup100043b6hhpkd4mhz%2522%253A%257B%2522id%2522%253A%2522cls3bnup100043b6hhpkd4mhz%2522%252C%2522tabs%2522%253A%255B%257B%2522id%2522%253A%2522cls3ctta3002o3b6hlhau0ka9%2522%252C%2522mode%2522%253A%2522permanent%2522%252C%2522type%2522%253A%2522TERMINAL%2522%252C%2522shellId%2522%253A%2522cls3cttbn001idaga9v5y33ck%2522%257D%255D%252C%2522activeTabId%2522%253A%2522cls3ctta3002o3b6hlhau0ka9%2522%257D%257D%252C%2522showDevtools%2522%253Afalse%252C%2522showShells%2522%253Atrue%252C%2522showSidebar%2522%253Atrue%252C%2522sidebarPanelSize%2522%253A15%257D">Try now</a> •
   <a href="#features">Features</a> •
   <a href="/">Docs</a> •
-  <a href="/docs/roadmap.md">Roadmap</a> •
+  <a href="/#roadmap--current-status">Roadmap</a> •
   <a href="/">FAQ</a>
 </div>
 
@@ -23,6 +23,34 @@
 - ✅ **Zero dependencies.**
 - ✅ **No ORM** => **No leaky abstractions** => **No magic**. ✨
 - ✅ **Simple and familiar**
+
+# Roadmap / Current Status
+
+The MVP of this project is to support basic CRUD operations on a single table. The following is a list features that are already implemented or are planned to be implemented.
+
+Legend:
+
+- 📝: Planned
+- 🏗️: In Progress
+- ✅: Done
+
+## InferReturnTypeFromSqlStatement
+
+| Feature                         | Status |
+| ------------------------------- | ------ |
+| Support for `INSERT` statements | ✅     |
+| Support for `UPDATE` statements | ✅     |
+| Support for `DELETE` statements | ✅     |
+| Support for `SELECT` statements | 🏗️     |
+
+## InferParamsTypeFromSqlStatement
+
+| Feature                         | Status |
+| ------------------------------- | ------ |
+| Support for `INSERT` statements | ✅     |
+| Support for `UPDATE` statements | ✅     |
+| Support for `DELETE` statements | ✅     |
+| Support for `SELECT` statements | 🏗️     |
 
 ## Installation
 
