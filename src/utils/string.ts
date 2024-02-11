@@ -32,8 +32,8 @@ export type ReplaceMultipleSubstrings<
  * Split a string by a delimiter
  *
  * @example
- * type T0 = SplitString<"a,b,c", ",">; // ["a", "b", "c"]
- * type T1 = SplitString<"a,b,c", "">; // ["a,b,c"]
+ * type T0 = Split<"a,b,c", ",">; // ["a", "b", "c"]
+ * type T1 = Split<"a,b,c", "">; // ["a,b,c"]
  */
-export type SplitString<Input extends string, Delimiter extends string> =
-  Input extends `${infer First}${Delimiter}${infer Rest}` ? [First, ...SplitString<Rest, Delimiter>] : [Input];
+export type Split<Input extends string, Delimiter extends string> =
+  Input extends `${infer First}${Delimiter}${infer Rest}` ? [First, ...Split<Rest, Delimiter>] : [Input];
