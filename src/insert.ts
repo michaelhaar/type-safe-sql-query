@@ -61,19 +61,7 @@
  * - ON DUPLICATE KEY UPDATE
  */
 
-import {
-  ExpandRecursively,
-  FilterOut,
-  InferParamsType,
-  Overwrite,
-  Shift,
-  Slice,
-  SliceBeforeFirstMatch,
-  SliceFromFirstMatch,
-  SliceFromFirstNonMatch,
-  TODO,
-  Tokenize,
-} from "./utils";
+import { Object, Array, InferParamsType, TODO, Tokenize } from "./utils";
 
 export type IsInsertStatement<Query extends string> = Query extends `INSERT ${string}` ? true : false;
 
@@ -113,7 +101,7 @@ type Parse<
     paramColumns: [];
   },
 > =
-  Overwrite<AstState, AstPatch> extends infer Ast extends InsertAst ?
+  Object.Overwrite<AstState, AstPatch> extends infer Ast extends InsertAst ?
     Ast["index"] extends 0 ?
       Parse<
         {
@@ -127,7 +115,7 @@ type Parse<
     : Ast["index"] extends 1 ?
       Parse<
         {
-          tokens: SliceFromFirstNonMatch<
+          tokens: Array.GetSliceFromFirstNonMatch<
             Ast["tokens"],
             "INSERT" | "LOW_PRIORITY" | "DELAYED" | "HIGH_PRIORITY" | "IGNORE" | "INTO"
           >;
@@ -139,7 +127,7 @@ type Parse<
       Parse<
         {
           tblName: Ast["tokens"][0];
-          tokens: Shift<Ast["tokens"]>;
+          tokens: Array.Shift<Ast["tokens"]>;
           index: 3;
         },
         Ast
@@ -147,8 +135,8 @@ type Parse<
     : Ast["index"] extends 3 ?
       Parse<
         {
-          columns: FilterOut<SliceBeforeFirstMatch<Ast["tokens"], "VALUES" | "VALUE">, "(" | ")">;
-          tokens: SliceFromFirstMatch<Ast["tokens"], "VALUES" | "VALUE">;
+          columns: Array.FilterOut<Array.GetSliceBeforeFirstMatch<Ast["tokens"], "VALUES" | "VALUE">, "(" | ")">;
+          tokens: Array.GetSliceFromFirstMatch<Ast["tokens"], "VALUES" | "VALUE">;
           index: 4;
         },
         Ast
@@ -156,8 +144,11 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          values: FilterOut<Slice<Ast["tokens"], "VALUES" | "VALUE", "AS" | "ON">, "VALUES" | "VALUE" | "(" | ")">;
-          tokens: SliceFromFirstMatch<Ast["tokens"], "AS" | "ON">;
+          values: Array.FilterOut<
+            Array.GetSliceBetween<Ast["tokens"], "VALUES" | "VALUE", "AS" | "ON">,
+            "VALUES" | "VALUE" | "(" | ")"
+          >;
+          tokens: Array.GetSliceFromFirstMatch<Ast["tokens"], "AS" | "ON">;
           index: 5;
         },
         Ast
@@ -172,14 +163,14 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["paramColumns"], Ast["tables"], Ast["tblName"]>;
         inferredReturnType: ReturnTypeFromInsertStatement;
         ast: Ast;
       }
     : never
   : never;
 
-export type InferParamsTypeFromInsertStatement<Query extends string, Tables extends TODO> = ExpandRecursively<
+export type InferParamsTypeFromInsertStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{
     query: Query;
     tables: Tables;
