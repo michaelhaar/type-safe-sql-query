@@ -8,18 +8,14 @@ import type {
 } from "./select";
 
 describe("ParseSelectStatement", () => {
-  function parseSelectStatement<Query extends string>(query: Query): ParseSelectStatement<Query> {
-    return query as any;
-  }
-
   test("SELECT * FROM tbl_name", () => {
-    const selectStatement = parseSelectStatement("SELECT * FROM tbl_name");
-    expectTypeOf(selectStatement).toEqualTypeOf<{ selectExpressionsString: "*"; tableReferencesString: "tbl_name" }>();
+    type Result = ParseSelectStatement<"SELECT * FROM tbl_name">;
+    expectTypeOf<Result>().toEqualTypeOf<{ selectExpressionsString: "*"; tableReferencesString: "tbl_name" }>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
-    const selectStatement = parseSelectStatement("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(selectStatement).toEqualTypeOf<{
+    type Result = ParseSelectStatement<"SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2">;
+    expectTypeOf<Result>().toEqualTypeOf<{
       selectExpressionsString: "col1, col2";
       tableReferencesString: "tbl_name1 JOIN tbl_name2";
     }>();
@@ -27,34 +23,26 @@ describe("ParseSelectStatement", () => {
 });
 
 describe("GetSelectExpressions", () => {
-  function getSelectExpressions<Query extends string>(query: Query): GetSelectExpressions<Query> {
-    return query as any;
-  }
-
   test("SELECT * FROM tbl_name", () => {
-    const selectExpressions = getSelectExpressions("SELECT * FROM tbl_name");
-    expectTypeOf(selectExpressions).toEqualTypeOf<["*"]>();
+    type Result = GetSelectExpressions<"SELECT * FROM tbl_name">;
+    expectTypeOf<Result>().toEqualTypeOf<["*"]>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
-    const selectExpressions = getSelectExpressions("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(selectExpressions).toEqualTypeOf<["col1", "col2"]>();
+    type Result = GetSelectExpressions<"SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2">;
+    expectTypeOf<Result>().toEqualTypeOf<["col1", "col2"]>();
   });
 });
 
 describe("GetTableNames", () => {
-  function getTableNames<Query extends string>(query: Query): GetTableNames<Query> {
-    return query as any;
-  }
-
   test("SELECT * FROM tbl_name", () => {
-    const tableNames = getTableNames("SELECT * FROM tbl_name");
-    expectTypeOf(tableNames).toEqualTypeOf<["tbl_name"]>();
+    type Result = GetTableNames<"SELECT * FROM tbl_name">;
+    expectTypeOf<Result>().toEqualTypeOf<["tbl_name"]>();
   });
 
   test("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2", () => {
-    const tableNames = getTableNames("SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2");
-    expectTypeOf(tableNames).toEqualTypeOf<["tbl_name1", "tbl_name2"]>();
+    type Result = GetTableNames<"SELECT col1, col2 FROM tbl_name1 JOIN tbl_name2">;
+    expectTypeOf<Result>().toEqualTypeOf<["tbl_name1", "tbl_name2"]>();
   });
 });
 
@@ -77,35 +65,29 @@ describe("InferReturnTypeFromSelectStatement", () => {
     };
   };
 
-  function inferReturnTypeFromSelectStatement<Query extends string>(
-    query: Query,
-  ): InferReturnTypeFromSelectStatement<Query, TestTables> {
-    return query as any;
-  }
-
   test("SELECT * FROM users", () => {
-    const result = inferReturnTypeFromSelectStatement("SELECT * FROM users");
-    expectTypeOf(result).toEqualTypeOf<TestTables["users"][]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<TestTables["users"][]>();
   });
 
   test("SELECT id, name FROM users", () => {
-    const result = inferReturnTypeFromSelectStatement("SELECT id, name FROM users");
-    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string }[]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT id, name FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT users.id, posts.title FROM users JOIN posts", () => {
-    const result = inferReturnTypeFromSelectStatement("SELECT users.id, posts.title FROM users JOIN posts");
-    expectTypeOf(result).toEqualTypeOf<{ id: number; title: string }[]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT users.id, posts.title FROM users JOIN posts", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; title: string }[]>();
   });
 
   test("SELECT id AS id_alias FROM users", () => {
-    const result = inferReturnTypeFromSelectStatement("SELECT id AS id_alias FROM users");
-    expectTypeOf(result).toEqualTypeOf<{ id_alias: number }[]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT id AS id_alias FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id_alias: number }[]>();
   });
 
   test("SELECT id id_alias FROM users", () => {
-    const result = inferReturnTypeFromSelectStatement("SELECT id id_alias FROM users");
-    expectTypeOf(result).toEqualTypeOf<{ id_alias: number }[]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT id id_alias FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id_alias: number }[]>();
   });
 });
 
@@ -128,24 +110,21 @@ describe("InferParamsTypeFromSelectStatement", () => {
     };
   };
 
-  function inferParamsType<Query extends string>(query: Query): InferParamsTypeFromSelectStatement<Query, TestTables> {
-    return query as any;
-  }
-
   test("SELECT * FROM users", () => {
-    const result = inferParamsType("SELECT * FROM users");
-    expectTypeOf(result).toEqualTypeOf<[]>();
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[]>();
   });
 
   test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
-    const result = inferParamsType("SELECT * FROM users WHERE id = ? AND name = ?");
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
   test("SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?", () => {
-    const result = inferParamsType(
+    type Result = InferParamsTypeFromSelectStatement<
       "SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?",
-    );
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 });
