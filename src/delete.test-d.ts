@@ -15,12 +15,8 @@ type TestTables = {
 };
 
 describe("InferParamsTypeFromDeleteStatement", () => {
-  function inferParamsType<Q extends string>(query: Q): InferParamsTypeFromDeleteStatement<Q, TestTables> {
-    return query as any;
-  }
-
   test("DELETE FROM users WHERE id = ? AND name = ?", () => {
-    const result = inferParamsType("DELETE FROM users WHERE id = ? AND name = ?");
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+    type Result = InferParamsTypeFromDeleteStatement<"DELETE FROM users WHERE id = ? AND name = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 });
