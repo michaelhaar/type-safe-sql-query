@@ -26,7 +26,7 @@
  */
 
 import { InferParamsType } from "./utils";
-import { ExpandRecursively, Overwrite, Shift, Slice, SliceFromFirstNonMatch, TODO, Tokenize } from "./utils";
+import { Object, Array, TODO, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsUpdateStatement<Query extends string> = Query extends `UPDATE ${string}` ? true : false;
@@ -74,7 +74,7 @@ type Parse<
     paramColumns: [];
   },
 > =
-  Overwrite<AstState, AstPatch> extends infer Ast extends UpdateAst ?
+  Object.Overwrite<AstState, AstPatch> extends infer Ast extends UpdateAst ?
     Ast["index"] extends 0 ?
       Parse<
         {
@@ -88,7 +88,7 @@ type Parse<
     : Ast["index"] extends 1 ?
       Parse<
         {
-          tokens: SliceFromFirstNonMatch<Ast["tokens"], "UPDATE" | "LOW_PRIORITY" | "IGNORE">;
+          tokens: Array.GetSliceFromFirstNonMatch<Ast["tokens"], "UPDATE" | "LOW_PRIORITY" | "IGNORE">;
           index: 2;
         },
         Ast
@@ -97,7 +97,7 @@ type Parse<
       Parse<
         {
           tblName: Ast["tokens"][0];
-          tokens: Shift<Ast["tokens"]>;
+          tokens: Array.Shift<Ast["tokens"]>;
           index: 3;
         },
         Ast
@@ -105,8 +105,8 @@ type Parse<
     : Ast["index"] extends 3 ?
       Parse<
         {
-          setClauseTokens: Slice<Ast["tokens"], "SET", "WHERE" | "ORDER" | "LIMIT">;
-          tokens: SliceFromFirstNonMatch<Ast["tokens"], "WHERE" | "ORDER" | "LIMIT">;
+          setClauseTokens: Array.GetSliceBetween<Ast["tokens"], "SET", "WHERE" | "ORDER" | "LIMIT">;
+          tokens: Array.GetSliceFromFirstNonMatch<Ast["tokens"], "WHERE" | "ORDER" | "LIMIT">;
           index: 4;
         },
         Ast
@@ -114,8 +114,8 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          whereClauseTokens: Slice<Ast["tokens"], "WHERE", "ORDER" | "LIMIT">;
-          tokens: SliceFromFirstNonMatch<Ast["tokens"], "ORDER" | "LIMIT">;
+          whereClauseTokens: Array.GetSliceBetween<Ast["tokens"], "WHERE", "ORDER" | "LIMIT">;
+          tokens: Array.GetSliceFromFirstNonMatch<Ast["tokens"], "ORDER" | "LIMIT">;
           paramColumns: ParseParamsFromSetClauseTokens<Ast["setClauseTokens"]>;
           index: 5;
         },
@@ -131,13 +131,13 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["paramColumns"], Ast["tables"], Ast["tblName"]>;
         inferredReturnType: ReturnTypeFromUpdateStatement;
         ast: Ast;
       }
     : never
   : never;
 
-export type InferParamsTypeFromUpdateStatement<Query extends string, Tables extends TODO> = ExpandRecursively<
+export type InferParamsTypeFromUpdateStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
 >;
