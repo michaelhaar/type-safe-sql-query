@@ -61,11 +61,11 @@
  *   - join_specification
  */
 
-import { FilterOut, Split } from "./utils";
+import { Array, String } from "./utils";
 
-type SplitBySpace<S extends string> = Split<S, " ">;
+type SplitBySpace<S extends string> = String.Split<S, " ">;
 type JoinKeywords = "JOIN" | "INNER" | "CROSS" | "STRAIGHT_JOIN" | "LEFT" | "RIGHT" | "OUTER" | "NATURAL";
-type FilterKeywordsAndEmptyStrings<Arr extends any[]> = FilterOut<Arr, JoinKeywords | "">;
+type FilterKeywordsAndEmptyStrings<Arr extends any[]> = Array.FilterOut<Arr, JoinKeywords | "">;
 
 export type ParseTableReference<TableRef extends string> = FilterKeywordsAndEmptyStrings<SplitBySpace<TableRef>>;
 
