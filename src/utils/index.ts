@@ -1,5 +1,8 @@
 import * as Array from "./array";
 import * as String from "./string";
+import * as Object from "./object";
+
+export { Array, String, Object };
 
 /**
  * Small util type to use as a placeholder for a type that we want to implement later
