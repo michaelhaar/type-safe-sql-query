@@ -19,89 +19,82 @@ type TestTables = {
   };
 };
 
-function inferReturnTypeFromSqlStatement<Query extends string>(
-  query: Query,
-): InferReturnTypeFromSqlStatement<Query, TestTables> {
-  return query as any;
-}
-
-function inferParamsTypeFromSqlStatement<Query extends string>(
-  query: Query,
-): InferParamsTypeFromSqlStatement<Query, TestTables> {
-  return query as any;
-}
-
 describe("SELECT", () => {
   test("SELECT * FROM users", () => {
-    const result = inferReturnTypeFromSqlStatement("SELECT * FROM users");
-    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string }[]>();
+    type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT id, name AS fullName FROM users", () => {
-    const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users");
-    expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
+    type Result = InferReturnTypeFromSqlStatement<"SELECT id, name AS fullName FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; fullName: string }[]>();
   });
 
   test("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name", () => {
-    const result = inferReturnTypeFromSqlStatement("SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name");
-    expectTypeOf(result).toEqualTypeOf<{ id: number; fullName: string }[]>();
+    type Result = InferReturnTypeFromSqlStatement<
+      "SELECT id, name AS fullName FROM users WHERE id = 1 ORDER BY name",
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; fullName: string }[]>();
   });
 
   test("SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId", () => {
-    const result = inferReturnTypeFromSqlStatement(
+    type Result = InferReturnTypeFromSqlStatement<
       "SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId",
-    );
-    expectTypeOf(result).toEqualTypeOf<{ id: number; name: string; title: string }[]>();
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string; title: string }[]>();
   });
 
   // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?", () => {
-    const result = inferParamsTypeFromSqlStatement(
+    type Result = InferParamsTypeFromSqlStatement<
       "SELECT id, name, posts.title FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?",
-    );
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 });
 
 describe("DELETE", () => {
   // TODO: add `describe` block for `inferReturnType` on next vitest release
   test("DELETE FROM users", () => {
-    const result = inferReturnTypeFromSqlStatement("DELETE FROM users");
-    expectTypeOf(result).toEqualTypeOf<string>();
+    type Result = InferReturnTypeFromSqlStatement<"DELETE FROM users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<string>();
   });
 
   // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("DELETE FROM users WHERE id = ? AND name = ?", () => {
-    const result = inferParamsTypeFromSqlStatement("DELETE FROM users WHERE id = ? AND name = ?");
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+    type Result = InferParamsTypeFromSqlStatement<"DELETE FROM users WHERE id = ? AND name = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 });
 
 describe("INSERT", () => {
   describe("inferReturnType", () => {
     test("INSERT INTO users (id, name) VALUES (1, 'Alice')", () => {
-      const result = inferReturnTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (1, 'Alice')");
-      expectTypeOf(result).toEqualTypeOf<string>();
+      type Result = InferReturnTypeFromSqlStatement<"INSERT INTO users (id, name) VALUES (1, 'Alice')", TestTables>;
+      expectTypeOf<Result>().toEqualTypeOf<string>();
     });
   });
 
   // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
-    const result = inferParamsTypeFromSqlStatement("INSERT INTO users (id, name) VALUES (?, ?)");
-    expectTypeOf(result).toEqualTypeOf<[number, string]>();
+    type Result = InferParamsTypeFromSqlStatement<"INSERT INTO users (id, name) VALUES (?, ?)", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 });
 
 describe("UPDATE", () => {
   // TODO: add `describe` block for `inferReturnType` on next vitest release
   test("UPDATE users SET name = 'Bob' WHERE id = 1", () => {
-    const result = inferReturnTypeFromSqlStatement("UPDATE users SET name = 'Bob' WHERE id = 1");
-    expectTypeOf(result).toEqualTypeOf<string>();
+    type Result = InferReturnTypeFromSqlStatement<"UPDATE users SET name = 'Bob' WHERE id = 1", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<string>();
   });
 
   // TODO: add `describe` block for `inferParamsType` on next vitest release
   test("UPDATE users SET name = ? WHERE id = ?", () => {
-    const result = inferParamsTypeFromSqlStatement("UPDATE users SET name = ? WHERE id = ?");
-    expectTypeOf(result).toEqualTypeOf<[string, number]>();
+    type Result = InferParamsTypeFromSqlStatement<"UPDATE users SET name = ? WHERE id = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
 });
