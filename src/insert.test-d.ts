@@ -21,12 +21,11 @@ type TestTables = {
 };
 
 describe("InferParamsTypeFromInsertStatement", () => {
-  function inferParamsType<Q extends string>(query: Q): InferParamsTypeFromInsertStatement<Q, TestTables> {
-    return query as any;
-  }
-
-  test("INSERT INTO users (id, name) VALUES (?, ?)", () => {
-    const result = inferParamsType("INSERT INTO users (id, name, country) VALUES (?, ?, ?)");
-    expectTypeOf(result).toEqualTypeOf<[number, string, "AT" | "DE"]>();
+  test("INSERT INTO users (id, name, country) VALUES (?, ?, ?)", () => {
+    type Result = InferParamsTypeFromInsertStatement<
+      "INSERT INTO users (id, name, country) VALUES (?, ?, ?)",
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
 });

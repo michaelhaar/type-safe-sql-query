@@ -15,12 +15,8 @@ type TestTables = {
 };
 
 describe("InferParamsTypeFromUpdateStatement", () => {
-  function inferParamsType<Q extends string>(query: Q): InferParamsTypeFromUpdateStatement<Q, TestTables> {
-    return query as any;
-  }
-
   test("UPDATE users SET name = ? WHERE id = ?", () => {
-    const result = inferParamsType("UPDATE users SET name = ? WHERE id = ?");
-    expectTypeOf(result).toEqualTypeOf<[string, number]>();
+    type Result = InferParamsTypeFromUpdateStatement<"UPDATE users SET name = ? WHERE id = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
 });
