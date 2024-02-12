@@ -27,13 +27,13 @@
  *  - Things like `DISTINCT`
  */
 
-import { ExpandRecursively, Split } from "./utils";
+import { Object, String } from "./utils";
 
 /**
  * Extracts the `select_expr` part from a `SELECT` statement.
  * e.g ParseSelectExpressions<"col1, col2, col3"> => ["col1", "col2", "col3"]
  */
-export type ParseSelectExpressions<Query extends string> = Split<Query, ", ">;
+export type ParseSelectExpressions<Query extends string> = String.Split<Query, ", ">;
 
 /**
  * Sanitizes the `select_expr` part from a `SELECT` statement.
@@ -63,7 +63,7 @@ export type PickWithSanitizedSelectExpressions<Queries extends string[], Tables>
       TableName extends keyof Tables ?
         RestOfFirst extends `*` ? Tables[TableName] & PickWithSanitizedSelectExpressions<Rest, Tables>
         : ExtractColumnName<RestOfFirst> extends keyof Tables[TableName] ?
-          ExpandRecursively<
+          Object.ExpandRecursively<
             {
               [K in ExtractAlias<RestOfFirst>]: Tables[TableName][ExtractColumnName<RestOfFirst>];
             } & PickWithSanitizedSelectExpressions<Rest, Tables>

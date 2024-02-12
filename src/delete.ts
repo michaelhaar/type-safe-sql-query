@@ -23,16 +23,7 @@
  */
 
 import { InferParamsType } from "./utils";
-import {
-  ExpandRecursively,
-  Overwrite,
-  Shift,
-  Slice,
-  SliceFromFirstMatch,
-  SliceFromFirstNonMatch,
-  TODO,
-  Tokenize,
-} from "./utils";
+import { Object, Array, TODO, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsDeleteStatement<Query extends string> = Query extends `DELETE ${infer _Rest}` ? true : false;
@@ -61,7 +52,7 @@ type Parse<
     paramColumns: [];
   },
 > =
-  Overwrite<AstState, AstPatch> extends infer Ast extends DeleteAst ?
+  Object.Overwrite<AstState, AstPatch> extends infer Ast extends DeleteAst ?
     Ast["index"] extends 0 ?
       Parse<
         {
@@ -75,7 +66,10 @@ type Parse<
     : Ast["index"] extends 1 ?
       Parse<
         {
-          tokens: SliceFromFirstNonMatch<Ast["tokens"], "DELETE" | "LOW_PRIORITY" | "QUICK" | "IGNORE" | "FROM">;
+          tokens: Array.GetSliceFromFirstNonMatch<
+            Ast["tokens"],
+            "DELETE" | "LOW_PRIORITY" | "QUICK" | "IGNORE" | "FROM"
+          >;
           index: 2;
         },
         Ast
@@ -84,7 +78,7 @@ type Parse<
       Parse<
         {
           tblName: Ast["tokens"][0];
-          tokens: Shift<Ast["tokens"]>;
+          tokens: Array.Shift<Ast["tokens"]>;
           index: 3;
         },
         Ast
@@ -92,8 +86,8 @@ type Parse<
     : Ast["index"] extends 3 ?
       Parse<
         {
-          whereClauseTokens: Slice<Ast["tokens"], "WHERE", "ORDER BY" | "LIMIT">;
-          tokens: SliceFromFirstMatch<Ast["tokens"], "WHERE">;
+          whereClauseTokens: Array.GetSliceBetween<Ast["tokens"], "WHERE", "ORDER BY" | "LIMIT">;
+          tokens: Array.GetSliceFromFirstMatch<Ast["tokens"], "WHERE">;
           index: 4;
         },
         Ast
@@ -108,14 +102,14 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType<Ast["tblName"], Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["paramColumns"], Ast["tables"], Ast["tblName"]>;
         inferredReturnType: ReturnTypeFromDeleteStatement;
         ast: Ast;
       }
     : never
   : never;
 
-export type InferParamsTypeFromDeleteStatement<Query extends string, Tables extends TODO> = ExpandRecursively<
+export type InferParamsTypeFromDeleteStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{
     query: Query;
     tables: Tables;

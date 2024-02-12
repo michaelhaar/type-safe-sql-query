@@ -56,16 +56,7 @@ import {
   SanitizeSelectExpressions,
 } from "./select-expression";
 import { ParseTableReferences } from "./table-references";
-import {
-  ExpandRecursively,
-  InferParamsType2,
-  Overwrite,
-  Slice,
-  SliceBeforeFirstMatch,
-  SliceFromFirstNonMatch,
-  TODO,
-  Tokenize,
-} from "./utils";
+import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsSelectStatement<Query extends string> = Query extends `SELECT ${string}` ? true : false;
@@ -120,7 +111,7 @@ type Parse<
     paramColumns: [];
   },
 > =
-  Overwrite<AstState, AstPatch> extends infer Ast extends SelectAst ?
+  Object.Overwrite<AstState, AstPatch> extends infer Ast extends SelectAst ?
     Ast["index"] extends 0 ?
       Parse<
         {
@@ -134,7 +125,7 @@ type Parse<
     : Ast["index"] extends 1 ?
       Parse<
         {
-          tokens: SliceFromFirstNonMatch<
+          tokens: Array.GetSliceFromFirstNonMatch<
             Ast["tokens"],
             | "SELECT"
             | "ALL"
@@ -155,9 +146,9 @@ type Parse<
     : Ast["index"] extends 2 ?
       Parse<
         {
-          selectExprTokens: SliceBeforeFirstMatch<Ast["tokens"], "INTO" | "FROM" | "WHERE" | OtherKeyword>;
-          tableRefTokens: Slice<Ast["tokens"], "FROM", "WHERE" | OtherKeyword>;
-          whereClauseTokens: Slice<Ast["tokens"], "WHERE", OtherKeyword>;
+          selectExprTokens: Array.GetSliceBeforeFirstMatch<Ast["tokens"], "INTO" | "FROM" | "WHERE" | OtherKeyword>;
+          tableRefTokens: Array.GetSliceBetween<Ast["tokens"], "FROM", "WHERE" | OtherKeyword>;
+          whereClauseTokens: Array.GetSliceBetween<Ast["tokens"], "WHERE", OtherKeyword>;
           index: 3;
         },
         Ast
@@ -180,13 +171,13 @@ type Parse<
       >
     : Ast["index"] extends 100 ?
       {
-        inferredParamsType: InferParamsType2<Ast["paramColumns"], Ast["tables"]>;
+        inferredParamsType: InferParamsType<Ast["paramColumns"], Ast["tables"]>;
         inferredReturnType: TODO;
         ast: Ast;
       }
     : never
   : never;
 
-export type InferParamsTypeFromSelectStatement<Query extends string, Tables extends TODO> = ExpandRecursively<
+export type InferParamsTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
 >;
