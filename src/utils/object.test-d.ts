@@ -7,3 +7,10 @@ describe("Overwrite", () => {
     expectTypeOf<Result>().toEqualTypeOf<{ a: number; b: number; c: string }>();
   });
 });
+
+describe("ExpandRecursively", () => {
+  test("should not change the type", () => {
+    type Result = Object.ExpandRecursively<{ a: { b: { c: string } } }>;
+    expectTypeOf<Result>().toEqualTypeOf<{ a: { b: { c: string } } }>();
+  });
+});
