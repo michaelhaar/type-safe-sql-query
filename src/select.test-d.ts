@@ -3,7 +3,10 @@ import type {
   InferParamsTypeFromSelectStatement,
   InferReturnTypeFromSelectStatement,
   IsSelectStatement,
+  InferReturnType,
+  SanitizeColumnNames,
 } from "./select";
+import { Object } from "./utils";
 
 describe("IsSelectStatement", () => {
   test("SELECT * FROM users", () => {
@@ -120,4 +123,30 @@ describe("InferParamsTypeFromSelectStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
   // });
+});
+
+describe("InferReturnType", () => {
+  type TestTable = { users: { id: number; name: string; age: number } };
+
+  test('["users.id", "users.name"]', () => {
+    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.name"], TestTable>>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string }>();
+  });
+
+  test('["users.id", "users.age"]', () => {
+    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.age"], TestTable>>;
+    expectTypeOf<Result>().toEqualTypeOf<{ id: number; age: number }>();
+  });
+});
+
+describe("SanitizeColumnNames", () => {
+  test('["col1", "col2"], "tbl_name1"', () => {
+    type Result = SanitizeColumnNames<["col1", "col2"], "tbl_name1">;
+    expectTypeOf<Result>().toEqualTypeOf<["tbl_name1.col1", "tbl_name1.col2"]>();
+  });
+
+  test('["col1", "tbl_name2.col1"], "tbl_name1"', () => {
+    type Result = SanitizeColumnNames<["col1", "tbl_name2.col1"], "tbl_name1">;
+    expectTypeOf<Result>().toEqualTypeOf<["tbl_name1.col1", "tbl_name2.col1"]>();
+  });
 });

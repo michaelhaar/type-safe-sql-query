@@ -64,8 +64,6 @@ type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "I
  * type TestTable = { users: { id: number, name: string, age: number }};
  * type T0 = InferReturnType<["users.id", "users.name"], TestTable>; // { id: number, name: string }
  * type T1 = InferReturnType<["users.id", "users.age"], TestTable>; // { id: number, age: number }
- *
- * @todo add unit tests
  */
 export type InferReturnType<SelectedColumns extends string[], Tables> =
   SelectedColumns extends [infer First extends string, ...infer Rest extends string[]] ?
@@ -87,10 +85,8 @@ export type InferReturnType<SelectedColumns extends string[], Tables> =
  * @example
  * type T0 = SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
  * type T1 = SanitizeSelectExpressions<["col1", "tbl_name2.col1"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name2.col1"]
- *
- * @todo Add unit tests
  */
-type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
+export type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
   S extends [] ? []
   : S extends [infer First extends string, ...infer Rest extends string[]] ?
     First extends `${infer _TableName}.${infer _ColumnName}` ?
