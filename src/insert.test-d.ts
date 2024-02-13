@@ -1,5 +1,5 @@
 import { test, describe, expectTypeOf } from "vitest";
-import { InferParamsTypeFromInsertStatement, IsInsertStatement } from "./insert";
+import { InferParamsTypeFromInsertStatement, IsInsertStatement, ParseParamColumns } from "./insert";
 
 type TestTables = {
   users: {
@@ -57,4 +57,16 @@ describe("InferParamsTypeFromInsertStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
   // });
+});
+
+describe("ParseParamColumns", () => {
+  test("['name', 'age'], ['?', '?']", () => {
+    type Result = ParseParamColumns<["name", "age"], ["?", "?"]>;
+    expectTypeOf<Result>().toEqualTypeOf<["name", "age"]>();
+  });
+
+  test("['name', 'age'], ['?', '32']", () => {
+    type Result = ParseParamColumns<["name", "age"], ["?", "32"]>;
+    expectTypeOf<Result>().toEqualTypeOf<["name"]>();
+  });
 });

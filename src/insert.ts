@@ -67,13 +67,19 @@ export type IsInsertStatement<Query extends string> = Uppercase<Query> extends `
 
 export type ReturnTypeFromInsertStatement = string;
 
-// TODO: rename?
-type GetParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
+/**
+ * Parse the `paramColumns` from the `columnTokens` type.
+ *
+ * @example
+ * type T0 = ParseParamColumns<["name", "age"], ["?", "?"]>; // ["name", "age"]
+ * type T1 = ParseParamColumns<["name", "age"], ["?", "32"]>; // ["name"]
+ */
+export type ParseParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
   Values extends [infer FirstValue extends string, ...infer RestValues extends string[]] ?
     Columns extends [infer FirstColumn extends string, ...infer RestColumns extends string[]] ?
       FirstValue extends "?" ?
-        GetParamColumns<RestColumns, RestValues, [...ParamColumns, FirstColumn]>
-      : GetParamColumns<RestColumns, RestValues, ParamColumns>
+        ParseParamColumns<RestColumns, RestValues, [...ParamColumns, FirstColumn]>
+      : ParseParamColumns<RestColumns, RestValues, ParamColumns>
     : ParamColumns
   : ParamColumns;
 
@@ -156,7 +162,7 @@ type Parse<
     : Ast["index"] extends 5 ?
       Parse<
         {
-          paramColumns: GetParamColumns<Ast["columns"], Ast["values"]>;
+          paramColumns: ParseParamColumns<Ast["columns"], Ast["values"]>;
           index: 100;
         },
         Ast
