@@ -37,11 +37,11 @@ export type ParseParamsFromWhereClauseTokens<
   Params extends string[] = [],
 > =
   WhereConditionTokens extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends LogicalOperator ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
+    Uppercase<First> extends Uppercase<LogicalOperator> ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
     : ColumnName extends null ? ParseParamsFromWhereClauseTokens<Rest, First, Params>
     : ColumnName extends string ?
       First extends "?" ? ParseParamsFromWhereClauseTokens<Rest, ColumnName, [...Params, ColumnName]>
-      : First extends LogicalOperator ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
+      : Uppercase<First> extends Uppercase<LogicalOperator> ? ParseParamsFromWhereClauseTokens<Rest, null, Params>
       : ParseParamsFromWhereClauseTokens<Rest, ColumnName, Params>
     : never
   : Params;
