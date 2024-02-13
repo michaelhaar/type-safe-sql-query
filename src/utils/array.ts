@@ -1,6 +1,8 @@
 /**
  * Returns a new array containing the elements after the first match of a search string
  *
+ * @note Search is case-insensitive
+ *
  * @example
  * type T0 = GetSliceAfterFirstMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
  * type T1 = GetSliceAfterFirstMatch<["a", "b", "c", "d"], "b" | "c">; // ["c", "d"]
@@ -9,7 +11,7 @@
  */
 export type GetSliceAfterFirstMatch<Input extends string[], Search extends string> =
   Input extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends Search ?
+    Uppercase<First> extends Uppercase<Search> ?
       Rest
     : GetSliceAfterFirstMatch<Rest, Search>
   : [];
@@ -17,13 +19,15 @@ export type GetSliceAfterFirstMatch<Input extends string[], Search extends strin
 /**
  * Similar to `GetSliceAfterFirstMatch` but includes the first match.
  *
+ *  @note Search is case-insensitive
+ *
  * @example
  * type T0 = GetSliceFromFirstMatch<["a", "b", "c", "d"], "b" | "c">; // ["b", "c", "d"]
  * type T1 = GetSliceFromFirstMatch<["a", "b", "c", "d"], "e">; // []
  */
 export type GetSliceFromFirstMatch<Input extends string[], Search extends string> =
   Input extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends Search ?
+    Uppercase<First> extends Uppercase<Search> ?
       [First, ...Rest]
     : GetSliceFromFirstMatch<Rest, Search>
   : [];
@@ -31,19 +35,23 @@ export type GetSliceFromFirstMatch<Input extends string[], Search extends string
 /**
  * Returns a new array containing the elements starting from the first non-match of a search string
  *
+ * @note Search is case-insensitive
+ *
  * @example
  * type T0 = GetSliceFromFirstNonMatch<["a", "b", "c", "d"], "a">; // ["b", "c", "d"]
  * type T1 = GetSliceFromFirstNonMatch<["a", "b", "c", "d"], "a" | "b">; // ["c", "d"]
  */
 export type GetSliceFromFirstNonMatch<Input extends string[], Search extends string> =
   Input extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends Search ?
+    Uppercase<First> extends Uppercase<Search> ?
       GetSliceFromFirstNonMatch<Rest, Search>
     : Input
   : Input;
 
 /**
  * Returns a new array containing the elements before the first match of a search string
+ *
+ * @note Search is case-insensitive
  *
  * @example
  * type T0 = GetSliceBeforeFirstMatch<["a", "b", "c", "d"], "a">; // []
@@ -52,13 +60,15 @@ export type GetSliceFromFirstNonMatch<Input extends string[], Search extends str
  */
 export type GetSliceBeforeFirstMatch<Input extends string[], Search extends string> =
   Input extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends Search ?
+    Uppercase<First> extends Uppercase<Search> ?
       []
     : [First, ...GetSliceBeforeFirstMatch<Rest, Search>]
   : Input;
 
 /**
  * Slice tokens from a token array
+ *
+ * @note Search is case-insensitive
  *
  * @example
  * type T0 = GetSliceBetween<["a", "b", "c", "d"], "b", "c">; // []
@@ -73,8 +83,8 @@ export type GetSliceBetween<
   Accumulated extends string[] = [],
 > =
   Input extends [infer First extends string, ...infer Rest extends string[]] ?
-    First extends From ? GetSliceBetween<Rest, From, To, true, Accumulated>
-    : First extends To ?
+    Uppercase<First> extends Uppercase<From> ? GetSliceBetween<Rest, From, To, true, Accumulated>
+    : Uppercase<First> extends Uppercase<To> ?
       InSlice extends true ?
         Accumulated
       : GetSliceBetween<Rest, From, To, false, Accumulated>
@@ -93,14 +103,16 @@ export type Shift<Input extends string[]> = Input extends [infer _First, ...infe
 /**
  * Filter out elements from an array
  *
+ * @note FilterType is case-insensitive
+ *
  * @example
  * type T0 = FilterOut<[1, 2, 3, "a", "b", "c"], number>; // ["a", "b", "c"]
  * type T1 = FilterOut<[1, 2, 3, "a", "b", "c"], string>; // [1, 2, 3]
  * type T2 = FilterOut<[1, 2, 3, "a", "b", "c"], "a" | "b">; // [1, 2, 3, "c"]
  */
 export type FilterOut<Arr extends string[], FilterType extends string> =
-  Arr extends [infer First, ...infer Rest extends string[]] ?
-    First extends FilterType ?
+  Arr extends [infer First extends string, ...infer Rest extends string[]] ?
+    Uppercase<First> extends Uppercase<FilterType> ?
       FilterOut<Rest, FilterType>
     : [First, ...FilterOut<Rest, FilterType>]
   : [];

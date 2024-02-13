@@ -26,7 +26,7 @@ import { InferParamsType } from "./utils";
 import { Object, Array, TODO, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
-export type IsDeleteStatement<Query extends string> = Query extends `DELETE ${infer _Rest}` ? true : false;
+export type IsDeleteStatement<Query extends string> = Uppercase<Query> extends `DELETE ${infer _Rest}` ? true : false;
 
 export type ReturnTypeFromDeleteStatement = string;
 

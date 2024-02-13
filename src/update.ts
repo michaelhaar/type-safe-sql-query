@@ -29,7 +29,7 @@ import { InferParamsType } from "./utils";
 import { Object, Array, TODO, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
-export type IsUpdateStatement<Query extends string> = Query extends `UPDATE ${string}` ? true : false;
+export type IsUpdateStatement<Query extends string> = Uppercase<Query> extends `UPDATE ${string}` ? true : false;
 
 export type ReturnTypeFromUpdateStatement = string;
 
