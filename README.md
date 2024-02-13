@@ -173,7 +173,7 @@ It's astonishing that SQL remains prevalent **nearly half a century later**, mai
 ![so-database-survey-2023](docs/assets/so-survey-2023.png)
 (Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/))
 
-I think these are the main reasons for its success:
+IMHO these are the main reasons for its success:
 
 - Well-defined and standardized language
 - Easy and simple
