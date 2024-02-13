@@ -61,7 +61,7 @@
  * - ON DUPLICATE KEY UPDATE
  */
 
-import { Object, Array, InferParamsType, TODO, Tokenize } from "./utils";
+import { Object, Array, InferParamsType, TablesBase, Tokenize } from "./utils";
 
 export type IsInsertStatement<Query extends string> = Uppercase<Query> extends `INSERT ${string}` ? true : false;
 
@@ -79,7 +79,7 @@ type GetParamColumns<Columns extends string[], Values extends string[], ParamCol
 
 type InsertAst = {
   query: string;
-  tables: TODO;
+  tables: TablesBase;
   tokens: string[];
   index: number;
   tblName: string;
@@ -92,7 +92,7 @@ type Parse<
   AstPatch extends Partial<InsertAst>,
   AstState extends InsertAst = {
     query: "";
-    tables: TODO;
+    tables: {};
     tokens: [];
     index: 0;
     tblName: "";
@@ -170,7 +170,10 @@ type Parse<
     : never
   : never;
 
-export type InferParamsTypeFromInsertStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
+export type InferParamsTypeFromInsertStatement<
+  Query extends string,
+  Tables extends TablesBase,
+> = Object.ExpandRecursively<
   Parse<{
     query: Query;
     tables: Tables;

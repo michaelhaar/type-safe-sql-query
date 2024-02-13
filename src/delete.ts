@@ -23,7 +23,7 @@
  */
 
 import { InferParamsType } from "./utils";
-import { Object, Array, TODO, Tokenize } from "./utils";
+import { Object, Array, TablesBase, Tokenize } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsDeleteStatement<Query extends string> = Uppercase<Query> extends `DELETE ${infer _Rest}` ? true : false;
@@ -32,7 +32,7 @@ export type ReturnTypeFromDeleteStatement = string;
 
 type DeleteAst = {
   query: string;
-  tables: TODO;
+  tables: TablesBase;
   tokens: string[];
   index: number;
   tblName: string;
@@ -44,7 +44,7 @@ type Parse<
   AstPatch extends Partial<DeleteAst>,
   AstState extends DeleteAst = {
     query: "";
-    tables: TODO;
+    tables: {};
     tokens: [];
     index: 0;
     tblName: "";
@@ -109,7 +109,10 @@ type Parse<
     : never
   : never;
 
-export type InferParamsTypeFromDeleteStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
+export type InferParamsTypeFromDeleteStatement<
+  Query extends string,
+  Tables extends TablesBase,
+> = Object.ExpandRecursively<
   Parse<{
     query: Query;
     tables: Tables;
