@@ -54,7 +54,7 @@
 import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
-export type IsSelectStatement<Query extends string> = Query extends `SELECT ${string}` ? true : false;
+export type IsSelectStatement<Query extends string> = Uppercase<Query> extends `SELECT ${string}` ? true : false;
 
 type JoinKeywords = "JOIN" | "INNER" | "CROSS" | "STRAIGHT_JOIN" | "LEFT" | "RIGHT" | "OUTER" | "NATURAL";
 type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "INTO" | "FOR";
