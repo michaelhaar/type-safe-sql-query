@@ -63,7 +63,7 @@
 
 import { Object, Array, InferParamsType, TODO, Tokenize } from "./utils";
 
-export type IsInsertStatement<Query extends string> = Query extends `INSERT ${string}` ? true : false;
+export type IsInsertStatement<Query extends string> = Uppercase<Query> extends `INSERT ${string}` ? true : false;
 
 export type ReturnTypeFromInsertStatement = string;
 
