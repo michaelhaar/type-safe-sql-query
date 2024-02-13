@@ -161,19 +161,23 @@ Other low level database drivers like [mysql](https://github.com/mysqljs/mysql),
 - [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
 - [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
 
-He did a quick poll in one of those videos and people seem enjoy writing SQL statements. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
+He did a quick poll in one of those videos and people seem enjoy writing SQL statements, which was a bit surprising to me. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
 
 ![Do you like orms](docs/assets/do-you-like-orms.png)
 (Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
 
-Maybe that's also the reason why [Drizzle ORM](https://orm.drizzle.team/) is so popular at the moment (9th Place at [2023 JavaScript Rising Stars](https://risingstars.js.org/2023/en#section-all)) since one of it's main selling points is:
+SQL has been around since the 1970s, and was standardized by the American National Standards Institute in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)).
 
-> If you know SQL — you know Drizzle.
+It's astonishing that SQL remains prevalent **nearly half a century later**, maintaining its status as the most used database technology and one of the most employed programming/scripting/markup languages, according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/), especially when many other software technologies struggle to endure beyond half a decade.
 
-SQL has been around since the 1970s, and was standardized by the American National Standards Institute (ANSI) in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)). There must be a good reason why it's still around after approximately **half a century** and is still one of the most used databases according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases), while other software technologies barely survive a decade.
+![so-database-survey-2023](docs/assets/so-survey-2023.png)
+(Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/))
 
-![so-database-survey-2023](docs/assets/so-database-survey-2023.png)
-(Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/#databases))
+IMHO these are the main reasons for its success:
+
+- Well-defined and standardized language
+- Easy and simple
+- High performance
 
 ### 3 Different Classes of Abstraction
 
