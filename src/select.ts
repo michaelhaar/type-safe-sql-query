@@ -48,6 +48,7 @@
 /**
  * Not supported:
  * - TODO: add keywords
+ * - TODO: add info from deleted table-references and select-expressions files
  */
 
 import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
