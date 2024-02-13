@@ -103,14 +103,16 @@ export type Shift<Input extends string[]> = Input extends [infer _First, ...infe
 /**
  * Filter out elements from an array
  *
+ * @note FilterType is case-insensitive
+ *
  * @example
  * type T0 = FilterOut<[1, 2, 3, "a", "b", "c"], number>; // ["a", "b", "c"]
  * type T1 = FilterOut<[1, 2, 3, "a", "b", "c"], string>; // [1, 2, 3]
  * type T2 = FilterOut<[1, 2, 3, "a", "b", "c"], "a" | "b">; // [1, 2, 3, "c"]
  */
 export type FilterOut<Arr extends string[], FilterType extends string> =
-  Arr extends [infer First, ...infer Rest extends string[]] ?
-    First extends FilterType ?
+  Arr extends [infer First extends string, ...infer Rest extends string[]] ?
+    Uppercase<First> extends Uppercase<FilterType> ?
       FilterOut<Rest, FilterType>
     : [First, ...FilterOut<Rest, FilterType>]
   : [];
