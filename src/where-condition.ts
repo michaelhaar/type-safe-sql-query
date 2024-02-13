@@ -24,13 +24,15 @@
  *     = | != | < | > | <= | >= | LIKE | IN | BETWEEN | IS NULL | IS NOT NULL
  */
 
-type LogicalOperator = "AND" | "OR";
+type LogicalOperator = "AND" | "OR" | "NOT";
 
-// 1. split the tokens into expressions
-// 2. parse the expressions
-//   a. first token is a column name?
-//   b. if one of the other tokens is a question mark, then add column name to result array
-// 3. return the result array
+/**
+ * Parse the Params from the `where_condition` tokens.
+ *
+ * @example
+ * type T0 = ParseParamsFromWhereClauseTokens<["id", "=", "?"]>; // ["id"]
+ * type T1 = ParseParamsFromWhereClauseTokens<["id", "=", "?", "AND", "name", "=", "?", "OR", "age", "=", "?"], null>; // ["id", "name", "age"]
+ */
 export type ParseParamsFromWhereClauseTokens<
   WhereConditionTokens extends string[],
   ColumnName extends string | null = null,
@@ -45,6 +47,3 @@ export type ParseParamsFromWhereClauseTokens<
       : ParseParamsFromWhereClauseTokens<Rest, ColumnName, Params>
     : never
   : Params;
-
-// TODO improve docs
-// TODO implement unit tests
