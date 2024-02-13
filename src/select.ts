@@ -39,13 +39,7 @@
  */
 
 /**
- * Assumptions:
- * - TODO: Add Notes on Quotes
- */
-
-/**
  * Not supported:
- * - TODO: add keywords
  * - TODO: add info from deleted table-references and select-expressions files
  */
 
