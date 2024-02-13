@@ -2,15 +2,16 @@ import { InferParamsTypeFromDeleteStatement, IsDeleteStatement, ReturnTypeFromDe
 import { InferParamsTypeFromInsertStatement, IsInsertStatement, ReturnTypeFromInsertStatement } from "./insert";
 import { InferParamsTypeFromSelectStatement, InferReturnTypeFromSelectStatement, IsSelectStatement } from "./select";
 import { InferParamsTypeFromUpdateStatement, IsUpdateStatement, ReturnTypeFromUpdateStatement } from "./update";
+import { TablesBase } from "./utils";
 
-export type InferReturnTypeFromSqlStatement<Query extends string, Tables> =
+export type InferReturnTypeFromSqlStatement<Query extends string, Tables extends TablesBase> =
   IsSelectStatement<Query> extends true ? InferReturnTypeFromSelectStatement<Query, Tables>
   : IsDeleteStatement<Query> extends true ? ReturnTypeFromDeleteStatement
   : IsInsertStatement<Query> extends true ? ReturnTypeFromInsertStatement
   : IsUpdateStatement<Query> extends true ? ReturnTypeFromUpdateStatement
   : never;
 
-export type InferParamsTypeFromSqlStatement<Query extends string, Tables> =
+export type InferParamsTypeFromSqlStatement<Query extends string, Tables extends TablesBase> =
   IsSelectStatement<Query> extends true ? InferParamsTypeFromSelectStatement<Query, Tables>
   : IsDeleteStatement<Query> extends true ? InferParamsTypeFromDeleteStatement<Query, Tables>
   : IsInsertStatement<Query> extends true ? InferParamsTypeFromInsertStatement<Query, Tables>

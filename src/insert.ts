@@ -61,25 +61,31 @@
  * - ON DUPLICATE KEY UPDATE
  */
 
-import { Object, Array, InferParamsType, TODO, Tokenize } from "./utils";
+import { Object, Array, InferParamsType, TablesBase, Tokenize } from "./utils";
 
 export type IsInsertStatement<Query extends string> = Uppercase<Query> extends `INSERT ${string}` ? true : false;
 
 export type ReturnTypeFromInsertStatement = string;
 
-// TODO: rename?
-type GetParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
+/**
+ * Parse the `paramColumns` from the `columnTokens` type.
+ *
+ * @example
+ * type T0 = ParseParamColumns<["name", "age"], ["?", "?"]>; // ["name", "age"]
+ * type T1 = ParseParamColumns<["name", "age"], ["?", "32"]>; // ["name"]
+ */
+export type ParseParamColumns<Columns extends string[], Values extends string[], ParamColumns extends string[] = []> =
   Values extends [infer FirstValue extends string, ...infer RestValues extends string[]] ?
     Columns extends [infer FirstColumn extends string, ...infer RestColumns extends string[]] ?
       FirstValue extends "?" ?
-        GetParamColumns<RestColumns, RestValues, [...ParamColumns, FirstColumn]>
-      : GetParamColumns<RestColumns, RestValues, ParamColumns>
+        ParseParamColumns<RestColumns, RestValues, [...ParamColumns, FirstColumn]>
+      : ParseParamColumns<RestColumns, RestValues, ParamColumns>
     : ParamColumns
   : ParamColumns;
 
 type InsertAst = {
   query: string;
-  tables: TODO;
+  tables: TablesBase;
   tokens: string[];
   index: number;
   tblName: string;
@@ -92,7 +98,7 @@ type Parse<
   AstPatch extends Partial<InsertAst>,
   AstState extends InsertAst = {
     query: "";
-    tables: TODO;
+    tables: {};
     tokens: [];
     index: 0;
     tblName: "";
@@ -156,7 +162,7 @@ type Parse<
     : Ast["index"] extends 5 ?
       Parse<
         {
-          paramColumns: GetParamColumns<Ast["columns"], Ast["values"]>;
+          paramColumns: ParseParamColumns<Ast["columns"], Ast["values"]>;
           index: 100;
         },
         Ast
@@ -170,7 +176,10 @@ type Parse<
     : never
   : never;
 
-export type InferParamsTypeFromInsertStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
+export type InferParamsTypeFromInsertStatement<
+  Query extends string,
+  Tables extends TablesBase,
+> = Object.ExpandRecursively<
   Parse<{
     query: Query;
     tables: Tables;

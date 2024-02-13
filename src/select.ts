@@ -36,20 +36,98 @@
  *   | INTO var_name [, var_name] ...
  * }
  * ```
+ *
+ * ## select_expr
+ *
+ * Unfortunately, the documentation is not very clear on the syntax of the `select_expr` part.
+ *
+ * From the documentation, it seems like `select_expr` is specified as follows:
+ *
+ * ```
+ * select_expressions:
+ *     select_expr [, select_expr] ...
+ *
+ * select_expr:
+ *    `*`
+ *   | tbl_name.`*`
+ *   | col_name [[AS] alias]
+ *   | tbl_name.col_name [AS alias]
+ *   | TODO: add Functions (COUNT, SUM, AVG, etc.), Expressions (1 + 1, etc.) and Things like `DISTINCT`?
+ * ```
+ *
+ *
+ *
+ * Not supported ATM:
+ *  - AS alias
+ *  - Functions (COUNT, SUM, AVG, etc.)
+ *  - Expressions (1 + 1, etc.)
+ *  - Things like `DISTINCT`
+ *
+ *
+ * ## table_references
+ *
+ * Official MySQL documentation for table_references:
+ * https://dev.mysql.com/doc/refman/8.0/en/join.html
+ *
+ * ```
+ * table_references:
+ *     escaped_table_reference [, escaped_table_reference] ...
+ *
+ * escaped_table_reference: {
+ *     table_reference
+ *   | { OJ table_reference }
+ * }
+ *
+ * table_reference: {
+ *     table_factor
+ *   | joined_table
+ * }
+ *
+ * table_factor: {
+ *     tbl_name [PARTITION (partition_names)]
+ *         [[AS] alias] [index_hint_list]
+ *   | [LATERAL] table_subquery [AS] alias [(col_list)]
+ *   | ( table_references )
+ * }
+ *
+ * joined_table: {
+ *     table_reference {[INNER | CROSS] JOIN | STRAIGHT_JOIN} table_factor [join_specification]
+ *   | table_reference {LEFT|RIGHT} [OUTER] JOIN table_reference join_specification
+ *   | table_reference NATURAL [INNER | {LEFT|RIGHT} [OUTER]] JOIN table_factor
+ * }
+ *
+ * join_specification: {
+ *     ON search_condition
+ *   | USING (join_column_list)
+ * }
+ *
+ * join_column_list:
+ *     column_name [, column_name] ...
+ *
+ * index_hint_list:
+ *     index_hint [, index_hint] ...
+ *
+ * index_hint: {
+ *     USE {INDEX|KEY}
+ *       [FOR {JOIN|ORDER BY|GROUP BY}] ([index_list])
+ *   | {IGNORE|FORCE} {INDEX|KEY}
+ *       [FOR {JOIN|ORDER BY|GROUP BY}] (index_list)
+ * }
+ *
+ * index_list:
+ *     index_name [, index_name] ...
+ * ```
+ *
+ *
+ * Not supported ATM:
+ *   - PARTITION
+ *   - alias
+ *   - table_subquery
+ *   - index_hint_list
+ *   - join_specification
  */
 
-/**
- * Assumptions:
- * - TODO: Add Notes on Quotes
- */
-
-/**
- * Not supported:
- * - TODO: add keywords
- * - TODO: add info from deleted table-references and select-expressions files
- */
-
-import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
+import { Object, Array, TablesBase, Tokenize, InferParamsType } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsSelectStatement<Query extends string> = Uppercase<Query> extends `SELECT ${string}` ? true : false;
@@ -64,8 +142,6 @@ type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "I
  * type TestTable = { users: { id: number, name: string, age: number }};
  * type T0 = InferReturnType<["users.id", "users.name"], TestTable>; // { id: number, name: string }
  * type T1 = InferReturnType<["users.id", "users.age"], TestTable>; // { id: number, age: number }
- *
- * @todo add unit tests
  */
 export type InferReturnType<SelectedColumns extends string[], Tables> =
   SelectedColumns extends [infer First extends string, ...infer Rest extends string[]] ?
@@ -87,10 +163,8 @@ export type InferReturnType<SelectedColumns extends string[], Tables> =
  * @example
  * type T0 = SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
  * type T1 = SanitizeSelectExpressions<["col1", "tbl_name2.col1"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name2.col1"]
- *
- * @todo Add unit tests
  */
-type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
+export type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
   S extends [] ? []
   : S extends [infer First extends string, ...infer Rest extends string[]] ?
     First extends `${infer _TableName}.${infer _ColumnName}` ?
@@ -100,7 +174,7 @@ type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
 
 type SelectAst = {
   query: string;
-  tables: TODO;
+  tables: TablesBase;
   tokens: string[];
   index: number;
   selectExprTokens: string[];
@@ -113,7 +187,7 @@ type Parse<
   AstPatch extends Partial<SelectAst>,
   AstState extends SelectAst = {
     query: "";
-    tables: TODO;
+    tables: {};
     tokens: [];
     index: 0;
     selectExprTokens: [];
@@ -191,12 +265,12 @@ type Parse<
     : never
   : never;
 
-export type InferParamsTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
-  Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
->;
+export type InferParamsTypeFromSelectStatement<
+  Query extends string,
+  Tables extends TablesBase,
+> = Object.ExpandRecursively<Parse<{ query: Query; tables: Tables }>["inferredParamsType"]>;
 
-// TODO: refactor to `export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Parse<{ query: Query; tables: Tables }>["inferredReturnType"]`
-// also for `InferParamsTypeFromSelectStatement` and other files
-export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
-  Parse<{ query: Query; tables: Tables }>["inferredReturnType"]
->[];
+export type InferReturnTypeFromSelectStatement<
+  Query extends string,
+  Tables extends TablesBase,
+> = Object.ExpandRecursively<Parse<{ query: Query; tables: Tables }>["inferredReturnType"]>[];

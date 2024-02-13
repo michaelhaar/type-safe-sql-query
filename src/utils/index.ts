@@ -54,3 +54,9 @@ export type InferParamsType<ParamColumns extends string[], Tables, FallbackTblNa
       : [never, ...InferParamsType<Rest, Tables, FallbackTblName>]
     : [never, ...InferParamsType<Rest, Tables, FallbackTblName>]
   : [];
+
+export type TablesBase = {
+  [tblNames in string]: {
+    [columnNames in string]: any;
+  };
+};
