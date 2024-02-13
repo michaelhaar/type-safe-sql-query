@@ -48,44 +48,57 @@
 /**
  * Not supported:
  * - TODO: add keywords
+ * - TODO: add info from deleted table-references and select-expressions files
  */
 
-import {
-  ParseSelectExpressions,
-  PickWithSanitizedSelectExpressions,
-  SanitizeSelectExpressions,
-} from "./select-expression";
-import { ParseTableReferences } from "./table-references";
 import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
 export type IsSelectStatement<Query extends string> = Query extends `SELECT ${string}` ? true : false;
 
-export type ParseSelectStatement<Query extends string> =
-  Query extends `SELECT ${infer SelectExpressionsString} FROM ${infer TableReferencesString}` ?
-    {
-      selectExpressionsString: SelectExpressionsString;
-      tableReferencesString: TableReferencesString;
-    }
-  : never;
-
-export type GetTableNames<Query extends string> = ParseTableReferences<
-  ParseSelectStatement<Query>["tableReferencesString"]
->;
-export type GetSelectExpressions<Query extends string> = ParseSelectExpressions<
-  ParseSelectStatement<Query>["selectExpressionsString"]
->;
-export type GetSanitizedSelectExpressions<Query extends string> = SanitizeSelectExpressions<
-  GetSelectExpressions<Query>,
-  GetTableNames<Query>[0]
->;
-
-export type InferReturnTypeFromSelectStatement<Query extends string, Tables> = PickWithSanitizedSelectExpressions<
-  GetSanitizedSelectExpressions<Query>,
-  Tables
->[];
-
+type JoinKeywords = "JOIN" | "INNER" | "CROSS" | "STRAIGHT_JOIN" | "LEFT" | "RIGHT" | "OUTER" | "NATURAL";
 type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "INTO" | "FOR";
+
+/**
+ * Infer the `ReturnType` from the `Tables` type.
+ *
+ * @example
+ * type TestTable = { users: { id: number, name: string, age: number }};
+ * type T0 = InferReturnType<["users.id", "users.name"], TestTable>; // { id: number, name: string }
+ * type T1 = InferReturnType<["users.id", "users.age"], TestTable>; // { id: number, age: number }
+ *
+ * @todo add unit tests
+ */
+export type InferReturnType<SelectedColumns extends string[], Tables> =
+  SelectedColumns extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends `${infer TableName}.${infer ColumnName}` ?
+      TableName extends keyof Tables ?
+        ColumnName extends `*` ? Tables[TableName] & InferReturnType<Rest, Tables>
+        : ColumnName extends keyof Tables[TableName] ?
+          {
+            [K in ColumnName]: Tables[TableName][ColumnName];
+          } & InferReturnType<Rest, Tables>
+        : never
+      : never
+    : never
+  : {};
+
+/**
+ * Sanitizes the `select_expr` part from a `SELECT` statement.
+ *
+ * @example
+ * type T0 = SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
+ * type T1 = SanitizeSelectExpressions<["col1", "tbl_name2.col1"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name2.col1"]
+ *
+ * @todo Add unit tests
+ */
+type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
+  S extends [] ? []
+  : S extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends `${infer _TableName}.${infer _ColumnName}` ?
+      [First, ...SanitizeColumnNames<Rest, DefaultTableName>]
+    : [`${DefaultTableName}.${First}`, ...SanitizeColumnNames<Rest, DefaultTableName>]
+  : never;
 
 type SelectAst = {
   query: string;
@@ -156,6 +169,7 @@ type Parse<
     : Ast["index"] extends 3 ?
       Parse<
         {
+          tableRefTokens: Array.FilterOut<Ast["tableRefTokens"], JoinKeywords | "">;
           paramColumns: ParseParamsFromWhereClauseTokens<Ast["whereClauseTokens"]>;
           index: 4;
         },
@@ -164,7 +178,8 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          paramColumns: SanitizeSelectExpressions<Ast["paramColumns"], Ast["tableRefTokens"][0]>;
+          selectExprTokens: SanitizeColumnNames<Ast["selectExprTokens"], Ast["tableRefTokens"][0]>;
+          paramColumns: SanitizeColumnNames<Ast["paramColumns"], Ast["tableRefTokens"][0]>;
           index: 100;
         },
         Ast
@@ -172,7 +187,7 @@ type Parse<
     : Ast["index"] extends 100 ?
       {
         inferredParamsType: InferParamsType<Ast["paramColumns"], Ast["tables"]>;
-        inferredReturnType: TODO;
+        inferredReturnType: InferReturnType<Ast["selectExprTokens"], Ast["tables"]>;
         ast: Ast;
       }
     : never
@@ -181,3 +196,9 @@ type Parse<
 export type InferParamsTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
 >;
+
+// TODO: refactor to `export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Parse<{ query: Query; tables: Tables }>["inferredReturnType"]`
+// also for `InferParamsTypeFromSelectStatement` and other files
+export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
+  Parse<{ query: Query; tables: Tables }>["inferredReturnType"]
+>[];
