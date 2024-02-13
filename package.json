@@ -1,7 +1,7 @@
 {
   "name": "type-safe-sql-query",
-  "version": "0.0.2",
-  "description": "",
+  "version": "0.0.3",
+  "description": "Bridges the Gap Between SQL and TypeScript Types",
   "main": "src/index.ts",
   "scripts": {
     "test": "vitest run --typecheck",
