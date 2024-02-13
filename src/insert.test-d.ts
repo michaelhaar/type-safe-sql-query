@@ -31,12 +31,12 @@ describe("IsInsertStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<false>();
   });
 
-  describe("should support lowercase", () => {
-    test("insert into users (name) values (?)", () => {
-      type Result = IsInsertStatement<"insert into users (name) values (?)">;
-      expectTypeOf<Result>().toEqualTypeOf<true>();
-    });
+  // describe("should support lowercase", () => {
+  test("insert into users (name) values (?)", () => {
+    type Result = IsInsertStatement<"insert into users (name) values (?)">;
+    expectTypeOf<Result>().toEqualTypeOf<true>();
   });
+  // });
 });
 
 describe("InferParamsTypeFromInsertStatement", () => {
@@ -48,13 +48,13 @@ describe("InferParamsTypeFromInsertStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
 
-  describe("should support lowercase", () => {
-    test("insert into users (id, name, country) values (?, ?, ?)", () => {
-      type Result = InferParamsTypeFromInsertStatement<
-        "insert into users (id, name, country) values (?, ?, ?)",
-        TestTables
-      >;
-      expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
-    });
+  // describe("should support lowercase", () => {
+  test("insert into users (id, name, country) values (?, ?, ?)", () => {
+    type Result = InferParamsTypeFromInsertStatement<
+      "insert into users (id, name, country) values (?, ?, ?)",
+      TestTables
+    >;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
+  // });
 });

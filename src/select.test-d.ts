@@ -16,12 +16,12 @@ describe("IsSelectStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<false>();
   });
 
-  describe("should support lowercase", () => {
-    test("select * from users", () => {
-      type Result = IsSelectStatement<"select * from users">;
-      expectTypeOf<Result>().toEqualTypeOf<true>();
-    });
+  // describe("should support lowercase", () => {
+  test("select * from users", () => {
+    type Result = IsSelectStatement<"select * from users">;
+    expectTypeOf<Result>().toEqualTypeOf<true>();
   });
+  // });
 });
 
 describe("InferReturnTypeFromSelectStatement", () => {
@@ -69,12 +69,12 @@ describe("InferReturnTypeFromSelectStatement", () => {
   //   expectTypeOf<Result>().toEqualTypeOf<{ id_alias: number }[]>();
   // });
 
-  describe("should support lowercase", () => {
-    test("select * from users", () => {
-      type Result = InferReturnTypeFromSelectStatement<"select * from users", TestTables>;
-      expectTypeOf<Result>().toEqualTypeOf<TestTables["users"][]>();
-    });
+  // describe("should support lowercase", () => {
+  test("select * from users", () => {
+    type Result = InferReturnTypeFromSelectStatement<"select * from users", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<TestTables["users"][]>();
   });
+  // });
 });
 
 describe("InferParamsTypeFromSelectStatement", () => {
@@ -114,10 +114,10 @@ describe("InferParamsTypeFromSelectStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
-  describe("should support lowercase", () => {
-    test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
-      type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", TestTables>;
-      expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
-    });
+  // describe("should support lowercase", () => {
+  test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
+  // });
 });

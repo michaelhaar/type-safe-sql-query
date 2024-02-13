@@ -25,12 +25,12 @@ describe("IsUpdateStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<false>();
   });
 
-  describe("should support lowercase", () => {
-    test("update users set name = ? where id = ?", () => {
-      type Result = IsUpdateStatement<"update users set name = ? where id = ?">;
-      expectTypeOf<Result>().toEqualTypeOf<true>();
-    });
+  // describe("should support lowercase", () => {
+  test("update users set name = ? where id = ?", () => {
+    type Result = IsUpdateStatement<"update users set name = ? where id = ?">;
+    expectTypeOf<Result>().toEqualTypeOf<true>();
   });
+  // });
 });
 
 describe("InferParamsTypeFromUpdateStatement", () => {
@@ -39,10 +39,10 @@ describe("InferParamsTypeFromUpdateStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
 
-  describe("should support lowercase", () => {
-    test("update users set name = ? where id = ?", () => {
-      type Result = InferParamsTypeFromUpdateStatement<"update users set name = ? where id = ?", TestTables>;
-      expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
-    });
+  // describe("should support lowercase", () => {
+  test("update users set name = ? where id = ?", () => {
+    type Result = InferParamsTypeFromUpdateStatement<"update users set name = ? where id = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
+  // });
 });

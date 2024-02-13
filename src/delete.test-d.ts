@@ -25,12 +25,12 @@ describe("IsDeleteStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<false>();
   });
 
-  describe("should support lowercase", () => {
-    test("delete from users where id = ? and name = ?", () => {
-      type Result = IsDeleteStatement<"delete from users where id = ? and name = ?">;
-      expectTypeOf<Result>().toEqualTypeOf<true>();
-    });
+  // describe("should support lowercase", () => {
+  test("delete from users where id = ? and name = ?", () => {
+    type Result = IsDeleteStatement<"delete from users where id = ? and name = ?">;
+    expectTypeOf<Result>().toEqualTypeOf<true>();
   });
+  // });
 });
 
 describe("InferParamsTypeFromDeleteStatement", () => {
@@ -39,10 +39,10 @@ describe("InferParamsTypeFromDeleteStatement", () => {
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
-  describe("should support lowercase", () => {
-    test("delete from users where id = ? and name = ?", () => {
-      type Result = InferParamsTypeFromDeleteStatement<"delete from users where id = ? and name = ?", TestTables>;
-      expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
-    });
+  // describe("should support lowercase", () => {
+  test("delete from users where id = ? and name = ?", () => {
+    type Result = InferParamsTypeFromDeleteStatement<"delete from users where id = ? and name = ?", TestTables>;
+    expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
+  // });
 });
