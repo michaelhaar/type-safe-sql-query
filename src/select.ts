@@ -50,7 +50,6 @@
  * - TODO: add keywords
  */
 
-import { SanitizeSelectExpressions } from "./select-expression";
 import { Object, Array, TODO, Tokenize, InferParamsType } from "./utils";
 import { ParseParamsFromWhereClauseTokens } from "./where-condition";
 
@@ -66,6 +65,8 @@ type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "I
  * type TestTable = { users: { id: number, name: string, age: number }};
  * type T0 = InferReturnType<["users.id", "users.name"], TestTable>; // { id: number, name: string }
  * type T1 = InferReturnType<["users.id", "users.age"], TestTable>; // { id: number, age: number }
+ *
+ * @todo add unit tests
  */
 export type InferReturnType<SelectedColumns extends string[], Tables> =
   SelectedColumns extends [infer First extends string, ...infer Rest extends string[]] ?
@@ -80,6 +81,23 @@ export type InferReturnType<SelectedColumns extends string[], Tables> =
       : never
     : never
   : {};
+
+/**
+ * Sanitizes the `select_expr` part from a `SELECT` statement.
+ *
+ * @example
+ * type T0 = SanitizeSelectExpressions<["col1", "col2"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name1.col2"]
+ * type T1 = SanitizeSelectExpressions<["col1", "tbl_name2.col1"], "tbl_name1">  => ["tbl_name1.col1", "tbl_name2.col1"]
+ *
+ * @todo Add unit tests
+ */
+type SanitizeColumnNames<S extends string[], DefaultTableName extends string> =
+  S extends [] ? []
+  : S extends [infer First extends string, ...infer Rest extends string[]] ?
+    First extends `${infer _TableName}.${infer _ColumnName}` ?
+      [First, ...SanitizeColumnNames<Rest, DefaultTableName>]
+    : [`${DefaultTableName}.${First}`, ...SanitizeColumnNames<Rest, DefaultTableName>]
+  : never;
 
 type SelectAst = {
   query: string;
@@ -159,7 +177,8 @@ type Parse<
     : Ast["index"] extends 4 ?
       Parse<
         {
-          paramColumns: SanitizeSelectExpressions<Ast["paramColumns"], Ast["tableRefTokens"][0]>;
+          selectExprTokens: SanitizeColumnNames<Ast["selectExprTokens"], Ast["tableRefTokens"][0]>;
+          paramColumns: SanitizeColumnNames<Ast["paramColumns"], Ast["tableRefTokens"][0]>;
           index: 100;
         },
         Ast
@@ -179,4 +198,4 @@ export type InferParamsTypeFromSelectStatement<Query extends string, Tables exte
 
 export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{ query: Query; tables: Tables }>["inferredReturnType"]
->;
+>[];
