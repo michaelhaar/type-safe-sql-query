@@ -197,6 +197,8 @@ export type InferParamsTypeFromSelectStatement<Query extends string, Tables exte
   Parse<{ query: Query; tables: Tables }>["inferredParamsType"]
 >;
 
+// TODO: refactor to `export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Parse<{ query: Query; tables: Tables }>["inferredReturnType"]`
+// also for `InferParamsTypeFromSelectStatement` and other files
 export type InferReturnTypeFromSelectStatement<Query extends string, Tables extends TODO> = Object.ExpandRecursively<
   Parse<{ query: Query; tables: Tables }>["inferredReturnType"]
 >[];
