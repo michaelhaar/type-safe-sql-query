@@ -161,7 +161,7 @@ Other low level database drivers like [mysql](https://github.com/mysqljs/mysql),
 - [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
 - [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
 
-He did a quick poll in one of those videos and people seem enjoy writing SQL statements, which is quite interesting. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
+He did a quick poll in one of those videos and people seem enjoy writing SQL statements, which was a bit surprising to me. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
 
 ![Do you like orms](docs/assets/do-you-like-orms.png)
 (Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
