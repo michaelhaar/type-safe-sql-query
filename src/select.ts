@@ -40,8 +40,6 @@
 
 /**
  * Assumptions:
- * - Keywords are always uppercase
- * - Whitespace is always a single space
  * - TODO: Add Notes on Quotes
  */
 
