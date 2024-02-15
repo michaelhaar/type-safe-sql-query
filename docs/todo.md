@@ -80,9 +80,9 @@ I assume most readers are already familiar with the concept of a type system. Bu
 
 > A type system is a set of rules that assigns a property called type to the various constructs of a computer program, such as variables, expressions, functions or modules. The main purpose of a type system is to reduce possibilities for bugs in computer programs by defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way. see [Wikipedia](https://en.wikipedia.org/wiki/Type_system)
 
-The crucial part for us is "defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way". This is exactly what we need.
+The crucial part for us is "defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way". This is exactly what we need!
 
-Circling back to the problem stated above, using something like Typescript makes our code far more reliable and scalable.
+Circling back to the problem stated above, using something like Typescript makes our code far more reliable and scalable, while adding an acceptable amount of overhead/boilerplate.
 
 ```ts
 type User = {
@@ -109,10 +109,9 @@ Luckily for us this solves all of the problems mentioned earlier:
 
 - We can **easily find out what the `user` object looks** like by hovering the `User` type in our IDE.
 - When making changes the TS compiler will **tell us (to a certain extent) what other parts we need to update**.
-- It comes with an acceptable amount of overhead/boilerplate.
-  - **No need to add and maintain comments** to this trivial `printUserHobbies` function.
-  - **No need to add and maintain tests** for this simple use case.
-    - In this case TS gives us more than enough confidence that it works as required.
+- **No need to add and maintain comments** to this trivial `printUserHobbies` function.
+- **No need to add and maintain tests** for this simple use case.
+  - In this case TS gives us more than enough confidence that it works as required.
 
 No more questions like:
 
@@ -121,7 +120,7 @@ No more questions like:
 - What happens if we change something? How do we know if we need to update anything else?
 - Add documentation, tests, ... to mitigate the problems above.
 
-> Type-systems allow us to write more reliable and scalable code.
+**Type-systems allow us to write more reliable and scalable code.**
 
 ## Takeaways for Handling Remote Data
 
