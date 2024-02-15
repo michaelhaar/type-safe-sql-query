@@ -159,31 +159,6 @@ Other low level database drivers like [mysql](https://github.com/mysqljs/mysql),
 - Most ORMs and Query Builders are just wrappers around common packages/drivers like [mysql](https://github.com/mysqljs/mysql), [mysql2](https://github.com/sidorares/node-mysql2), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/). => Unnecessary performance/runtime overhead.
 - Having a dedicated compilation step that depends on the target platform (e.g., [Prisma](https://www.prisma.io/)) is quite cumbersome. => Unnecessary complexity.
 
-## Motivation: Do we need an Abstraction?
-
-[ThePrimeagen](https://twitter.com/ThePrimeagen) (I think he works at Netflix) recently published some videos about ORMs and SQL:
-
-- [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
-- [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
-
-He did a quick poll in one of those videos and people seem enjoy writing SQL statements, which was a bit surprising to me. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
-
-![Do you like orms](docs/assets/do-you-like-orms.png)
-(Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
-
-SQL has been around since the 1970s, and was standardized by the American National Standards Institute in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)).
-
-It's astonishing that SQL remains prevalent **nearly half a century later**, maintaining its status as the most used database technology and one of the most employed programming/scripting/markup languages, according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/), especially when many other software technologies struggle to endure beyond half a decade.
-
-![so-database-survey-2023](docs/assets/so-survey-2023.png)
-(Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/))
-
-IMHO these are the main reasons for its success:
-
-- Well-defined and standardized language
-- Easy and simple
-- High performance
-
 ### 3 Different Classes of Abstraction
 
 ORMs and SQL query builders are an attempt to abstract away the SQL language. Under the hood they are still using SQL to interact with the database.
