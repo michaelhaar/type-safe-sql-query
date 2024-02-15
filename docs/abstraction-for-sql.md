@@ -27,7 +27,7 @@ IMHO these are the main reasons for its success:
 
 ## Comparison
 
-The following examples illustrate why maybe we don't need an abstraction for SQL.
+The following examples illustrate why many people prefer SQL over ORMs and SQL query builders. The examples are based on the same CRUD operations, but use different Javascript/Typescript packages.
 
 ### Raw SQL
 
@@ -180,7 +180,7 @@ await db.update("users").set({ age: 31 }).where("id", "=", "John").execute();
 await db.deleteFrom("users").where("id", "=", "John").execute();
 ```
 
-## Landscape of SQL Abstractions
+## Appendix: Landscape of SQL Abstractions
 
 There are many SQL abstractions available, including but not limited to:
 
