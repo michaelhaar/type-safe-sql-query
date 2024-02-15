@@ -25,6 +25,161 @@ IMHO these are the main reasons for its success:
 - Easy and simple
 - High performance
 
+## Comparison
+
+The following examples illustrate why maybe we don't need an abstraction for SQL.
+
+### Raw SQL
+
+```sql
+-- Create
+INSERT INTO users (name, age) VALUES ('John', 30);
+
+-- Read
+SELECT * FROM users WHERE name = 'John' AND age < 40;
+
+-- Update
+UPDATE users SET age = 31 WHERE name = 'John';
+
+-- Delete
+DELETE FROM users WHERE name = 'John';
+```
+
+### type-safe-sql-query
+
+```typescript
+// Create
+await sql(`INSERT INTO users (name, age) VALUES (?, ?)`, ["John", 30]);
+
+// Read
+const users = await sql(`SELECT * FROM users WHERE name = ? AND age < ?`, ["John", 40]);
+
+// Update
+await sql(`UPDATE users SET age = ? WHERE name = ?`, [31, "John"]);
+
+// Delete
+await sql(`DELETE FROM users WHERE name = ?`, ["John"]);
+```
+
+### TypeORM
+
+```typescript
+// Create
+const user = new User();
+user.name = "John";
+user.age = 30;
+await userRepository.save(user);
+
+// Read
+const users = await userRepository.find({ name: "John": age: LessThan(40) });
+
+// Update
+const userToUpdate = await userRepository.findOneBy({
+  name: "John",
+});
+userToUpdate.age = 31;
+await userRepository.save(userToUpdate);
+
+// Delete
+const userToDelete = await userRepository.findOneBy({
+  name: "John",
+});
+await userRepository.remove(userToDelete);
+```
+
+### Prisma
+
+```typescript
+// Create
+await prisma.user.create({
+  data: {
+    name: "John",
+    age: 30,
+  },
+});
+
+// Read
+const users = await prisma.user.findMany({
+  where: {
+    name: "John",
+    age: {
+      lt: 40,
+    },
+  },
+});
+
+// Update
+await prisma.user.update({
+  where: {
+    name: "John",
+  },
+  data: {
+    age: 31,
+  },
+});
+
+// Delete
+await prisma.user.delete({
+  where: {
+    name: "John",
+  },
+});
+```
+
+### Drizzle
+
+```typescript
+// Create
+await db.insert(users).values({
+  name: "John",
+  age: 30,
+});
+
+// Read
+const users = await db
+  .select()
+  .from(users)
+  .where(and(eq(users.name, "John"), lt(users.age, 40)));
+
+// Update
+await db.update(users).set({ age: 31 }).where(eq(users.name, "John"));
+
+// Delete
+await db.delete(users).where(eq(users.name, "John"));
+```
+
+### Knex.js
+
+```javascript
+// Create
+await knex("users").insert({ name: "John", age: 30 });
+
+// Read
+const users = await knex("users").where({ name: "John" }).andWhere("age", "<", 40);
+
+// Update
+await knex("users").where({ name: "John" }).update({ age: 31 });
+
+// Delete
+await knex("users").where({ name: "John" }).del();
+```
+
+### Kysely
+
+```typescript
+// Create
+await db.insertInto("users").values({ name: "John", age: 30 }).execute();
+
+// Read
+const users = await db.selectFrom("users").selectAll().where("id", "=", "John").where("age", "<", 40).execute();
+
+// Update
+await db.update("users").set({ age: 31 }).where("id", "=", "John").execute();
+
+// Delete
+await db.deleteFrom("users").where("id", "=", "John").execute();
+```
+
 ## Landscape of SQL Abstractions
 
 There are many SQL abstractions available, including but not limited to:
@@ -112,170 +267,3 @@ Used Sources:
 - [Top 22 Rust ORM Projects](https://www.libhunt.com/l/rust/topic/orm)
 
 I counted 60+ SQL abstractions in the list above. I'm sure there are more out there. It's a bit overwhelming, isn't it? Imagine you are a backend developer and you need to switch between different projects, each of which uses a different SQL abstraction. You need to learn the API of each abstraction, and you need to remember the differences between them.
-
-## High level comparison of SQL abstractions
-
-### TypeORM
-
-```typescript
-// 1. define entity classes
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  name: string;
-
-  @Column()
-  age: number;
-}
-
-...
-
-// 2. create a connection
-const AppDataSource = new DataSource(options);
-await AppDataSource.initialize();
-const userRepository = AppDataSource.getRepository(User);
-
-...
-
-// 3. Usage
-const user = new User();
-user.name = "John";
-user.age = 30;
-await userRepository.save(user);
-
-const users = await userRepository.find({ name: "John" });
-```
-
-### Prisma
-
-```prisma
-// 1. Create schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
-}
-
-model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  age   Int
-}
-```
-
-```typescript
-// 2. create a connection
-const prisma = new PrismaClient();
-
-...
-
-// 3. Usage
-await prisma.user.create({
-  data: {
-    name: "John",
-    age: 30,
-  },
-});
-
-const users = await prisma.user.findMany({
-  where: {
-    name: "John",
-  },
-});
-```
-
-### Drizzle
-
-```typescript
-// 1. Define schema
-const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  name: text("name"),
-  age: integer("age"),
-});
-
-...
-
-// 2. create a connection
-const connection = connect(options);
-const db = drizzle(connection);
-
-...
-
-// 3. Usage
-await db.insert(users).values({
-  name: "John",
-  age: 30,
-});
-
-const users = await db.select().from(users).where(eq(users.name, "John"));
-```
-
-### Knex.js
-
-```javascript
-// 1. Create a connection
-const knex = require("knex")(options);
-
-...
-
-// 2. Usage
-await knex("users").insert({ name: "John", age: 30 });
-
-const users = await knex('users').where({ name: "John" }).;
-```
-
-### Kysely
-
-```typescript
-// 0. Auto-generate types
-type Database = {
-  users: {
-    id: number;
-    name: string;
-    age: number;
-  };
-};
-
-// 1. Create a connection
-export const db = new Kysely<Database>(options);
-
-// 2. Usage
-await db.insertInto("users").values({ name: "John", age: 30 }).execute();
-
-const users = await db.selectFrom("users").selectAll().where("id", "=", "John").execute();
-```
-
-### type-safe-sql-query
-
-```typescript
-// 0. Auto-generate types
-type Database = {
-  users: {
-    id: number;
-    name: string;
-    age: number;
-  };
-};
-
-// 1. Create a connection
-const connection = await mysql.createConnection(options);
-async function sqlQuery<S extends string>(
-  sql: S,
-  params: InferParamsTypeFromSqlStatement<S, Tables>,
-): InferReturnTypeFromSqlStatement<S, Tables> {
-  const [results] = await connection.query(sql, params);
-  return results as any;
-}
-
-// 2. Usage
-await sqlQuery(`INSERT INTO users (name, age) VALUES (?, ?)`, ["John", 30]);
-
-const users = await sqlQuery(`SELECT * FROM users WHERE name = ?`, ["John"]);
-```
