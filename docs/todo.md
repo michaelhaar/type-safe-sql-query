@@ -1,8 +1,10 @@
 # Handling remote data - What scales well and what doesn't
 
+> TLDR; Use a type system to handle remote data. It makes your code more reliable and scalable.
+
 Fetching and working with data from a remote computer/server is a very common task as such doing it "right" is really important.
 
-> "Right" is whatever works best for your use case. There are many ways to handle remote data and each has its own trade-offs (like everything in software engineering). This article describes my lessons learned.
+"right" is whatever works best for your use case. There are many ways to handle remote data and each has its own trade-offs (like everything in software engineering). This article describes my lessons learned.
 
 ## Lessons Learned from the History
 
@@ -20,7 +22,7 @@ const data = {
 };
 ```
 
-In in my small little DIY Indie hacker project, I might simply implement the `printHobbies` function like this:
+In in our small little DIY Indie hacker project, we might simply implement the `printHobbies` function like this:
 
 ```js
 function printHobbies(data) {
@@ -28,21 +30,21 @@ function printHobbies(data) {
 }
 ```
 
-This works well for a small application and as long as I'm the only developer working on it.
+This works well for a small application and as long as we're the only developer working on it.
 
 Great!
 
-But what happens if the application grows? Lets assume we want to implement the same trivial functionality in a bigger application:
+But what happens when the application grows? Lets assume we want to implement the same trivial functionality in a bigger application:
 
-- Let's assume it's an Node.js server
+- Let's assume it's an Node.js server backend
   - approx. 200 db tables
   - approx. 200 REST-ish endpoints
   - approx. half a million lines of JavaScript code
   - 1000+ files
 - 15+ developers are working on the same codebase and there's a lot of change happening.
-- Real users that are using the application, time pressure from management and we must not break anything.
-- There's a lot of "space" and code between the `data` definition and the `printHobbies` function.
-  - The `data` definition `const data = ...` is on the other end of the codebase. (1000+ files)
+- Real users are using the application, time pressure from management and we must not break anything.
+- and there's a lot of "space" and code between the `data` definition and the `printHobbies` function.
+  - The `data` definition `const data = ...` is on the other end of the codebase. (1000+ files away)
   - `data` is passed through 10+ functions before it reaches our `printHobbies` function.
 
 How can we as a developer know what the `data` looks like when it reaches our `printHobbies` function?
@@ -62,15 +64,15 @@ But we'll quickly realize that there are a few problems with this approach:
 We might mitigate the problems above by using some best practices like:
 
 - using a more descriptive variable and function names like `user` instead of `data` and `printUserHobbies` instead of `printHobbies`.
-- add some comments to the `printHobbies` function, which describe what the expected `data` param should look like.
+- add some comments to the `printHobbies` function, which describe what the expected `data` param looks like.
 - check the arguments of the `printHobbies` function and throw an error if it's not the expected type.
 - add some tests to the `printHobbies` function to make sure that our function is still working.
 
-But these are not good solutions. They are not reliable, not scalable and introduce a lot of overhead that needs to be maintained.
+But these are not good solutions. They are not reliable, not scalable and introduce a lot of overhead that needs to be maintained manually.
 
-As the demand for more complex applications grew, we developers had to find a way to handle data in a more reliable and scalable way!
+As the demand for more complex applications grew, we developers had to find a way to handle data in a more reliable and scalable way. Thankfully the industry has come up with a solution for this problem.
 
-Thankfully the industry has come up with a solution for this problem. It's called **Type System**.
+It's called **Type System**.
 
 ## The Importance of a Type System
 
@@ -78,7 +80,7 @@ I assume most readers are already familiar with the concept of a type system. Bu
 
 > A type system is a set of rules that assigns a property called type to the various constructs of a computer program, such as variables, expressions, functions or modules. The main purpose of a type system is to reduce possibilities for bugs in computer programs by defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way. see [Wikipedia](https://en.wikipedia.org/wiki/Type_system)
 
-The crucial part for our us is "defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way". This is exactly what we need.
+The crucial part for us is "defining interfaces between different parts of a computer program, and then checking that the parts have been connected in a consistent way". This is exactly what we need.
 
 Circling back to the problem stated above, using something like Typescript makes our code far more reliable and scalable.
 
