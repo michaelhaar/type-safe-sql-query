@@ -227,10 +227,9 @@ Usually these kind of comparisons are very opinionated and biased. I tried my be
 - **Learning curve**: Devs need to learn another API, and need to remember and maintain it over the whole lifetime of the project. SQL has been around for almost half a century and will probably still be around when we start working on a new project (Maybe even in a different programming language). It's a good investment to learn and understand SQL!
 - **Limited functionality**: While ORMs provide a lot of functionality, they can not support all of the features of a particular database. This can prevent us from taking advantage of advanced database features.
 - **Lack of control**: SQL abstractions can limit the developer's control over the database. This can be a problem when we need to optimize the performance of the database.
-- **Performance**: SQL abstractions are usually slower than raw SQL.
+- **Performance**: SQL abstractions are usually slower than raw SQL. Most ORMs and Query Builders are just wrappers around common packages/drivers like [mysql](https://github.com/mysqljs/mysql), [mysql2](https://github.com/sidorares/node-mysql2), [postgres](https://github.com/porsager/postgres) or [pg](https://node-postgres.com/). => Unnecessary performance/runtime overhead.
 - **Debugging and Testing**: SQL abstractions can be hard to debug. With raw SQL, we can simply copy and paste the query into a database client and run it to see the results.
 - **Documentation & Community**: SQL abstractions can have poor documentation. SQL has been around for a long time and has a large community. It's easier to find help and documentation for SQL.
-- **Same low level drivers**: Most modern JS/TS SQL abstractions are build on top of the same low level drivers. E.g.: Drizzle, TypeORM, Kysely, are all using the same low level driver `mysql2` under the hood. The main difference between them is the API they provide.
 - **Schema drift**: Database schema drift occurs when your database schema is out of sync with your migration history. The database schema has drifted away from the source of truth.
 - **Additional Compilation Step**: SQL abstractions can have an additional compilation steps, which adds complexity to the build process.
 
@@ -253,6 +252,7 @@ sources:
 - [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
 - [What ORMs have taught me: just learn SQL](https://wozniak.ca/blog/2014/08/03/1/index.html)
 - [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
+- [TypeScript and SQL: Six Ways to Bridge the Divide](https://effectivetypescript.com/2023/08/29/sql/)
 - [What are the benefits and drawbacks of using an ORM when working with databases?](https://www.quora.com/What-are-the-benefits-and-drawbacks-of-using-an-ORM-when-working-with-databases#:~:text=Benefits%3A,code%20needed%20to%20interact%20wit)
 - [Schema Drift](https://www.prisma.io/docs/orm/prisma-migrate/workflows/troubleshooting#schema-drift)
 - [What is Prisma?](https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma)
