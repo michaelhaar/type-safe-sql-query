@@ -114,7 +114,7 @@ type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName,
 // ResultWithAlias is: { fullName: string, age: number }[]
 ```
 
-The examples above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
+The example above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
 
 ```ts
 // tables.ts (auto-generated with schemats)
