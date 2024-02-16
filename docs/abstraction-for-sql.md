@@ -1,5 +1,9 @@
 # Do we need an Abstraction for SQL?
 
+> TLDR: ORMs are great until they aren't. ORMs are kind of awkward and suffer a lot from the last mile problem. They are very close to the 100% complete solution, but fall just short. Use the parts that makes sense for you. Use raw SQL for the rest.
+>
+> => Many people enjoy writing SQL.
+
 ## Introduction
 
 [ThePrimeagen](https://twitter.com/ThePrimeagen) (I think he works at Netflix) recently published some videos about ORMs and SQL:
@@ -7,16 +11,16 @@
 - [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
 - [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
 
-He did a quick poll in one of those videos and people seem enjoy writing SQL statements, which was a bit surprising to me. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
+He did a quick poll in one of those videos and people seem to enjoy writing SQL statements, which was a bit surprising to me. Approximately 50% of the people who voted chose SQL over ORMs and SQL query builders.
 
 ![Do you like orms](assets/do-you-like-orms.png)
 (Source: [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared))
 
 SQL has been around since the 1970s, and was standardized by the American National Standards Institute in 1986 ([A Brief History of SQL and its Usefulness](https://www.coginiti.co/tutorials/introduction/what-is-sql/#:~:text=SQL%20has%20been%20around%20since,needs%20of%20the%20database%20industry.)).
 
-It's astonishing that SQL remains prevalent **nearly half a century later**, maintaining its status as the most used database technology and one of the most employed programming/scripting/markup languages, according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/), especially when many other software technologies struggle to endure beyond half a decade.
+It's incredible that **nearly half a century later** SQL is still the most used database technology and one of the most employed programming/scripting/markup languages, according to the [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/), especially when many other software technologies struggle to endure beyond half a decade.
 
-![so-database-survey-2023](docs/assets/so-survey-2023.png)
+![so-database-survey-2023](assets/so-survey-2023.png)
 (Source: [Stackoverflow Survey 2023](https://survey.stackoverflow.co/2023/))
 
 IMHO these are the main reasons for its success:
@@ -27,7 +31,9 @@ IMHO these are the main reasons for its success:
 
 ## Comparison
 
-The following examples illustrate why many people prefer SQL over ORMs and SQL query builders. The examples are based on the same CRUD operations, but use different Javascript/Typescript packages.
+The following examples illustrate why many people prefer raw SQL over abstractions. The examples are based on the same CRUD operations, but use different Javascript/Typescript packages.
+
+In most cases, the raw SQL examples are shorter and more readable than the examples using SQL abstractions.
 
 ### Raw SQL
 
@@ -45,7 +51,7 @@ UPDATE users SET age = 31 WHERE name = 'John';
 DELETE FROM users WHERE name = 'John';
 ```
 
-### type-safe-sql-query
+### Low level drivers (e.g.: mysql2)
 
 ```typescript
 // Create
@@ -179,6 +185,77 @@ await db.update("users").set({ age: 31 }).where("id", "=", "John").execute();
 // Delete
 await db.deleteFrom("users").where("id", "=", "John").execute();
 ```
+
+## History of SQL Abstractions
+
+ORMs are an abstraction over your database. It's an attempt to make SQL obsolete. Solving Problems in general ways means one of two things:
+
+- Either it's technological breakthrough 📈
+- or a middle of the road tradeoff 📉
+
+By looking at the history of ORMs, it seems that ORMs are the latter. Here is a brief history of ORMs:
+
+- early 1990s: The concept of ORMs emerges. The idea was to abstract away the database and make it easier to work with objects in the programming language. ([A brief history of Object Relational Mapping](https://antoniogoncalves.org/2008/09/27/)).
+- 2000s: More sophisticated ORM frameworks emerge, such as [Hibernate](<https://en.wikipedia.org/wiki/Hibernate_(framework)>) for Java and [Entity Framework](https://en.wikipedia.org/wiki/Entity_Framework) for .NET.
+- 2004-2006: People already noticed that ORMs are not the silver bullet they were promised to be and people like Ted Neward predicted the future of ORMs:
+
+> Let's skip directly to the summary at the end which provides an great list of current (2006) and future solutions to the ORM problem:
+>
+> 1. **Abandonment** Developers simply give up on objects entirely
+> 2. **Wholehearted acceptance**. Developers simply give up on relational storage entirely
+> 3. **Manual mapping**. Developers simply accept that it's not such a hard problem to solve manually after all, and write straight relational-access code to return relations to the language, access the tuples, and populate objects as necessary.
+> 4. **Acceptance of ORM limitations**. Developers simply accept that there is no way to efficiently and easily close the loop on the O/R mismatch, and use an ORM to solve 80% (or 50% or 95%, or whatever percentage seems appropriate) of the problem and make use of SQL and relational-based access to carry them past those areas where an ORM would create problems.
+> 5. **Integration of relational concepts into the languages**
+>
+> Quoted from [Object-Relational Mapping is the Vietnam of Computer Science](https://blog.codinghorror.com/object-relational-mapping-is-the-vietnam-of-computer-science/)
+
+- 2024:
+  - Today there are more than 60+ SQL abstractions available where each of them has its own API. (see the appendix for a list of SQL abstractions)
+    - It's been more than 30+ years of competition and still no clear winner, which clearly indicates that there is no one-size-fits-all solution and ORMs a middle of the road tradeoff.
+  - We still don't have a concept for relational storage in the javascript language itself
+  - and SQL is still the most used database technology.
+  - Which leaves us with the following "solutions":
+    - **Manual mapping**
+    - **Acceptance of ORM limitations**.
+
+## Benefits and Drawbacks of SQL Abstractions
+
+Usually these kind of comparisons are very opinionated and biased. I tried my best to be as neutral as possible. I might have missed some points, or I might have been biased without noticing it. I'm open to feedback and I'm happy to update this document if you have any suggestions.
+
+### Arguments against SQL Abstractions
+
+- **Learning curve**: Devs need to learn another API, and need to remember and maintain it over the whole lifetime of the project. SQL has been around for almost half a century and will probably still be around when we start working on a new project (Maybe even in a different programming language). It's a good investment to learn and understand SQL!
+- **Limited functionality**: While ORMs provide a lot of functionality, they can not support all of the features of a particular database. This can prevent us from taking advantage of advanced database features.
+- **Lack of control**: SQL abstractions can limit the developer's control over the database. This can be a problem when we need to optimize the performance of the database.
+- **Performance**: SQL abstractions are usually slower than raw SQL.
+- **Debugging and Testing**: SQL abstractions can be hard to debug. With raw SQL, we can simply copy and paste the query into a database client and run it to see the results.
+- **Documentation & Community**: SQL abstractions can have poor documentation. SQL has been around for a long time and has a large community. It's easier to find help and documentation for SQL.
+- **Same low level drivers**: Most modern JS/TS SQL abstractions are build on top of the same low level drivers. E.g.: Drizzle, TypeORM, Kysely, are all using the same low level driver `mysql2` under the hood. The main difference between them is the API they provide.
+- **Schema drift**: Database schema drift occurs when your database schema is out of sync with your migration history. The database schema has drifted away from the source of truth.
+- **Additional Compilation Step**: SQL abstractions can have an additional compilation steps, which adds complexity to the build process.
+
+### Arguments for SQL Abstractions
+
+- **Type safety**: Modern SQL abstractions are usually type safe out of the box.
+- **Auto-Complete**: Modern SQL abstractions usually have auto-complete suggestions in IDEs.
+- **Input Validation**: Some SQL abstractions provide input validation out of the box.
+- **Optimization & Caching**: Some SQL abstractions offer query optimizations and caching.
+- **Security**: Modern SQL abstractions usually provide some security features. E.g.: to prevent SQL injection.
+- **Migrations**: SQL abstractions can have migration tools, which can be useful.
+- **Cross-Database Compatibility**: Many SQL abstractions are designed to abstract away the specific SQL dialects of different database systems, making it easier to switch between databases.
+- **Connection Pooling**: SQL abstractions can have connection pooling.
+- **Dynamic Query Construction**: It usually easier to dynamically construct queries based on runtime conditions.
+
+sources:
+
+- [Object–relational mapping](https://en.wikipedia.org/wiki/Object%E2%80%93relational_mapping)
+- [The Only Database Abstraction You Need](https://youtu.be/tbfKZy7Y1pc?feature=shared)
+- [The Only Database Abstraction You Need | Prime Reacts](https://youtu.be/nWchov5Do-o?feature=shared)
+- [What ORMs have taught me: just learn SQL](https://wozniak.ca/blog/2014/08/03/1/index.html)
+- [DONT USE AN ORM | Prime Reacts](https://youtu.be/bpGvVI7NM_k?feature=shared)
+- [What are the benefits and drawbacks of using an ORM when working with databases?](https://www.quora.com/What-are-the-benefits-and-drawbacks-of-using-an-ORM-when-working-with-databases#:~:text=Benefits%3A,code%20needed%20to%20interact%20wit)
+- [Schema Drift](https://www.prisma.io/docs/orm/prisma-migrate/workflows/troubleshooting#schema-drift)
+- [What is Prisma?](https://www.prisma.io/docs/orm/overview/introduction/what-is-prisma)
 
 ## Appendix: Landscape of SQL Abstractions
 
