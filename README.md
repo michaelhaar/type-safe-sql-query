@@ -127,6 +127,22 @@ export type DB = {
 };
 ```
 
+## Creating the `DB` Type
+
+No sql-query tool can provide type safety without knowing the database structure.
+
+This is where the concept of the `DB` type comes into play. The `DB` type contains the type information of all tables in the database, providing a structured and type-safe interface for database operations. The previous section contains a typical example of the `DB` type to showcase how this concept is applied in practice.
+
+Our approach aligns with the methodologies employed by [Kysely](https://kysely.dev/), a library known for its robust type safety features. By utilizing the same `DB` types as those defined in Kysely, we can leverage any tool compatible with Kysely to automatically generate the `DB` type for our database. This compatibility opens up a wide range of possibilities for enhancing our application's reliability and type safety, making the integration process seamless and efficient.
+
+- [Getting Started - Types](https://kysely.dev/docs/getting-started#types)
+- [Kysely - Generating types](https://kysely.dev/docs/generating-types)
+  - We recommend using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen).
+
+Note: [schemats](https://github.com/SweetIQ/schemats) and [sqlx-ts](https://github.com/JasonShin/sqlx-ts) might also work but have not been tested yet.
+
+Of course, you can also manually create the `DB` type. However, this is error-prone and strongly discouraged by the authors of this package.
+
 ### Usage with Low Level Database Drivers
 
 The following example demonstrates how to use `type-safe-sql-query` with the [mysql2](https://github.com/sidorares/node-mysql2) driver.
