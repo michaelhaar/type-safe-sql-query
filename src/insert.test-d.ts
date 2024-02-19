@@ -1,7 +1,7 @@
 import { test, describe, expectTypeOf } from "vitest";
 import { InferParamsTypeFromInsertStatement, IsInsertStatement, ParseParamColumns } from "./insert";
 
-type TestTables = {
+type DB = {
   users: {
     id: number;
     name: string;
@@ -41,19 +41,13 @@ describe("IsInsertStatement", () => {
 
 describe("InferParamsTypeFromInsertStatement", () => {
   test("INSERT INTO users (id, name, country) VALUES (?, ?, ?)", () => {
-    type Result = InferParamsTypeFromInsertStatement<
-      "INSERT INTO users (id, name, country) VALUES (?, ?, ?)",
-      TestTables
-    >;
+    type Result = InferParamsTypeFromInsertStatement<"INSERT INTO users (id, name, country) VALUES (?, ?, ?)", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
 
   // describe("should support lowercase", () => {
   test("insert into users (id, name, country) values (?, ?, ?)", () => {
-    type Result = InferParamsTypeFromInsertStatement<
-      "insert into users (id, name, country) values (?, ?, ?)",
-      TestTables
-    >;
+    type Result = InferParamsTypeFromInsertStatement<"insert into users (id, name, country) values (?, ?, ?)", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string, "AT" | "DE"]>();
   });
   // });

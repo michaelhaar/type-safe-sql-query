@@ -28,7 +28,7 @@ describe("IsSelectStatement", () => {
 });
 
 describe("InferReturnTypeFromSelectStatement", () => {
-  type TestTables = {
+  type DB = {
     users: {
       id: number;
       name: string;
@@ -47,41 +47,41 @@ describe("InferReturnTypeFromSelectStatement", () => {
   };
 
   test("SELECT * FROM users", () => {
-    type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users", TestTables>;
-    expectTypeOf<Result>().toEqualTypeOf<TestTables["users"][]>();
+    type Result = InferReturnTypeFromSelectStatement<"SELECT * FROM users", DB>;
+    expectTypeOf<Result>().toEqualTypeOf<DB["users"][]>();
   });
 
   test("SELECT id, name FROM users", () => {
-    type Result = InferReturnTypeFromSelectStatement<"SELECT id, name FROM users", TestTables>;
+    type Result = InferReturnTypeFromSelectStatement<"SELECT id, name FROM users", DB>;
     expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string }[]>();
   });
 
   test("SELECT users.id, posts.title FROM users JOIN posts", () => {
-    type Result = InferReturnTypeFromSelectStatement<"SELECT users.id, posts.title FROM users JOIN posts", TestTables>;
+    type Result = InferReturnTypeFromSelectStatement<"SELECT users.id, posts.title FROM users JOIN posts", DB>;
     expectTypeOf<Result>().toEqualTypeOf<{ id: number; title: string }[]>();
   });
 
   // TODO: uncomment when alias is supported.
   // test("SELECT id AS id_alias FROM users", () => {
-  //   type Result = InferReturnTypeFromSelectStatement<"SELECT id AS id_alias FROM users", TestTables>;
+  //   type Result = InferReturnTypeFromSelectStatement<"SELECT id AS id_alias FROM users", DB>;
   //   expectTypeOf<Result>().toEqualTypeOf<{ id_alias: number }[]>();
   // });
 
   // test("SELECT id id_alias FROM users", () => {
-  //   type Result = InferReturnTypeFromSelectStatement<"SELECT id id_alias FROM users", TestTables>;
+  //   type Result = InferReturnTypeFromSelectStatement<"SELECT id id_alias FROM users", DB>;
   //   expectTypeOf<Result>().toEqualTypeOf<{ id_alias: number }[]>();
   // });
 
   // describe("should support lowercase", () => {
   test("select * from users", () => {
-    type Result = InferReturnTypeFromSelectStatement<"select * from users", TestTables>;
-    expectTypeOf<Result>().toEqualTypeOf<TestTables["users"][]>();
+    type Result = InferReturnTypeFromSelectStatement<"select * from users", DB>;
+    expectTypeOf<Result>().toEqualTypeOf<DB["users"][]>();
   });
   // });
 });
 
 describe("InferParamsTypeFromSelectStatement", () => {
-  type TestTables = {
+  type DB = {
     users: {
       id: number;
       name: string;
@@ -100,41 +100,41 @@ describe("InferParamsTypeFromSelectStatement", () => {
   };
 
   test("SELECT * FROM users", () => {
-    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users", TestTables>;
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[]>();
   });
 
   test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
-    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", TestTables>;
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
   test("SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?", () => {
     type Result = InferParamsTypeFromSelectStatement<
       "SELECT * FROM users JOIN posts ON users.id = posts.userId WHERE users.id = ? AND posts.title = ?",
-      TestTables
+      DB
     >;
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
   // describe("should support lowercase", () => {
   test("SELECT * FROM users WHERE id = ? AND name = ?", () => {
-    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", TestTables>;
+    type Result = InferParamsTypeFromSelectStatement<"SELECT * FROM users WHERE id = ? AND name = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
   // });
 });
 
 describe("InferReturnType", () => {
-  type TestTable = { users: { id: number; name: string; age: number } };
+  type DB = { users: { id: number; name: string; age: number } };
 
   test('["users.id", "users.name"]', () => {
-    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.name"], TestTable>>;
+    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.name"], DB>>;
     expectTypeOf<Result>().toEqualTypeOf<{ id: number; name: string }>();
   });
 
   test('["users.id", "users.age"]', () => {
-    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.age"], TestTable>>;
+    type Result = Object.ExpandRecursively<InferReturnType<["users.id", "users.age"], DB>>;
     expectTypeOf<Result>().toEqualTypeOf<{ id: number; age: number }>();
   });
 });

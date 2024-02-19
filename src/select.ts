@@ -139,9 +139,9 @@ type OtherKeyword = "GROUP BY" | "HAVING" | "WINDOW" | "ORDER BY" | "LIMIT" | "I
  * Infer the `ReturnType` from the `Tables` type.
  *
  * @example
- * type TestTable = { users: { id: number, name: string, age: number }};
- * type T0 = InferReturnType<["users.id", "users.name"], TestTable>; // { id: number, name: string }
- * type T1 = InferReturnType<["users.id", "users.age"], TestTable>; // { id: number, age: number }
+ * type DB = { users: { id: number, name: string, age: number }};
+ * type T0 = InferReturnType<["users.id", "users.name"], DB>; // { id: number, name: string }
+ * type T1 = InferReturnType<["users.id", "users.age"], DB>; // { id: number, age: number }
  */
 export type InferReturnType<SelectedColumns extends string[], Tables> =
   SelectedColumns extends [infer First extends string, ...infer Rest extends string[]] ?
