@@ -97,30 +97,32 @@ The following examples demonstrates how to use `type-safe-sql-query` with MySQL.
 
 ```ts
 import type { InferReturnTypeFromSqlStatement, InferParamsTypeFromSqlStatement } from "type-safe-sql-query";
-import type { Tables } from "./tables";
+import type { DB } from "./db";
 
-type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", DB>;
 // Result is: { id: number, name: string, age: number, email: string }[]
 
-type Params = InferParamsTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Params = InferParamsTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", DB>;
 // Params is: [string, number]
 
-type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName, age FROM Users", Tables>;
+type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName, age FROM Users", DB>;
 // ResultWithAlias is: { fullName: string, age: number }[]
 ```
 
-The example above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
+The example above assumes that we have a file called `db.ts` that contains the type information of our database tables.
 
 ```ts
-// tables.ts (auto-generated with schemats)
+// db.ts (auto-generated)
 
-export type Tables = {
-  users: {
-    id: number;
-    name: string;
-    age: number;
-    email: string;
-  };
+type UsersTable = {
+  id: number;
+  name: string;
+  age: number;
+  email: string;
+};
+
+export type DB = {
+  users: UsersTable;
   // ...
 };
 ```
@@ -132,7 +134,7 @@ The following example demonstrates how to use `type-safe-sql-query` with the [my
 ```ts
 import mysql from "mysql2/promise";
 import type { InferParamsTypeFromSqlStatement, InferParamsFromSqlStatement } from "type-safe-sql-query";
-import type { Tables } from "./tables";
+import type { DB } from "./db";
 
 // Create the connection to database
 const connection = await mysql.createConnection({
@@ -144,8 +146,8 @@ const connection = await mysql.createConnection({
 // Create a type-safe query wrapper
 async function query<S extends string>(
   sql: S,
-  params: InferParamsTypeFromSqlStatement<S, Tables>,
-): InferReturnTypeFromSqlStatement<S, Tables> {
+  params: InferParamsTypeFromSqlStatement<S, DB>,
+): InferReturnTypeFromSqlStatement<S, DB> {
   const [results] = await connection.query(sql, params);
   return results as any;
 }
