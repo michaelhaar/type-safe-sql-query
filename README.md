@@ -127,7 +127,7 @@ export type DB = {
 };
 ```
 
-## Creating the `DB` Type
+### Creating the `DB` Type
 
 No sql-query tool can provide type safety without knowing the database structure.
 
