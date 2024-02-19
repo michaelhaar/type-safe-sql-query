@@ -1,7 +1,7 @@
 import { test, describe, expectTypeOf } from "vitest";
 import { InferParamsTypeFromUpdateStatement, IsUpdateStatement } from "./update";
 
-type TestTables = {
+type DB = {
   users: {
     id: number;
     name: string;
@@ -35,13 +35,13 @@ describe("IsUpdateStatement", () => {
 
 describe("InferParamsTypeFromUpdateStatement", () => {
   test("UPDATE users SET name = ? WHERE id = ?", () => {
-    type Result = InferParamsTypeFromUpdateStatement<"UPDATE users SET name = ? WHERE id = ?", TestTables>;
+    type Result = InferParamsTypeFromUpdateStatement<"UPDATE users SET name = ? WHERE id = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
 
   // describe("should support lowercase", () => {
   test("update users set name = ? where id = ?", () => {
-    type Result = InferParamsTypeFromUpdateStatement<"update users set name = ? where id = ?", TestTables>;
+    type Result = InferParamsTypeFromUpdateStatement<"update users set name = ? where id = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[string, number]>();
   });
   // });

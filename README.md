@@ -97,33 +97,51 @@ The following examples demonstrates how to use `type-safe-sql-query` with MySQL.
 
 ```ts
 import type { InferReturnTypeFromSqlStatement, InferParamsTypeFromSqlStatement } from "type-safe-sql-query";
-import type { Tables } from "./tables";
+import type { DB } from "./db";
 
-type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Result = InferReturnTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", DB>;
 // Result is: { id: number, name: string, age: number, email: string }[]
 
-type Params = InferParamsTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", Tables>;
+type Params = InferParamsTypeFromSqlStatement<"SELECT * FROM users WHERE name = ? AND age > ?", DB>;
 // Params is: [string, number]
 
-type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName, age FROM Users", Tables>;
+type ResultWithAlias = InferReturnTypeFromSqlStatement<"SELECT name AS fullName, age FROM Users", DB>;
 // ResultWithAlias is: { fullName: string, age: number }[]
 ```
 
-The example above assumes that we have a file called `tables.ts` that contains the type information of our database tables. This file should be auto-generated with [schemats](https://github.com/sweetiq/schemats) for example.
+The example above assumes that we have a file called `db.ts` that contains the type information of our database tables.
 
 ```ts
-// tables.ts (auto-generated with schemats)
+// db.ts (auto-generated)
 
-export type Tables = {
-  users: {
-    id: number;
-    name: string;
-    age: number;
-    email: string;
-  };
+type UsersTable = {
+  id: number;
+  name: string;
+  age: number;
+  email: string;
+};
+
+export type DB = {
+  users: UsersTable;
   // ...
 };
 ```
+
+### Creating the `DB` Type
+
+No sql-query tool can provide type safety without knowing the database structure.
+
+This is where the concept of the `DB` type comes into play. The `DB` type contains the type information of all tables in the database, providing a structured and type-safe interface for database operations. The previous section contains a typical example of the `DB` type to showcase how this concept is applied in practice.
+
+Our approach aligns with the methodologies employed by [Kysely](https://kysely.dev/), a library known for its robust type safety features. By utilizing the same `DB` types as those defined in Kysely, we can leverage any tool compatible with Kysely to automatically generate the `DB` type for our database. This compatibility opens up a wide range of possibilities for enhancing our application's reliability and type safety, making the integration process seamless and efficient.
+
+- [Getting Started - Types](https://kysely.dev/docs/getting-started#types)
+- [Kysely - Generating types](https://kysely.dev/docs/generating-types)
+  - We recommend using [kysely-codegen](https://github.com/RobinBlomberg/kysely-codegen).
+
+Note: [schemats](https://github.com/SweetIQ/schemats) and [sqlx-ts](https://github.com/JasonShin/sqlx-ts) might also work but have not been tested yet.
+
+Of course, you can also manually create the `DB` type. However, this is error-prone and strongly discouraged by the authors of this package.
 
 ### Usage with Low Level Database Drivers
 
@@ -132,7 +150,7 @@ The following example demonstrates how to use `type-safe-sql-query` with the [my
 ```ts
 import mysql from "mysql2/promise";
 import type { InferParamsTypeFromSqlStatement, InferParamsFromSqlStatement } from "type-safe-sql-query";
-import type { Tables } from "./tables";
+import type { DB } from "./db";
 
 // Create the connection to database
 const connection = await mysql.createConnection({
@@ -144,8 +162,8 @@ const connection = await mysql.createConnection({
 // Create a type-safe query wrapper
 async function query<S extends string>(
   sql: S,
-  params: InferParamsTypeFromSqlStatement<S, Tables>,
-): InferReturnTypeFromSqlStatement<S, Tables> {
+  params: InferParamsTypeFromSqlStatement<S, DB>,
+): InferReturnTypeFromSqlStatement<S, DB> {
   const [results] = await connection.query(sql, params);
   return results as any;
 }

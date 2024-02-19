@@ -1,7 +1,7 @@
 import { test, describe, expectTypeOf } from "vitest";
 import { InferParamsTypeFromDeleteStatement, IsDeleteStatement } from "./delete";
 
-type TestTables = {
+type DB = {
   users: {
     id: number;
     name: string;
@@ -35,13 +35,13 @@ describe("IsDeleteStatement", () => {
 
 describe("InferParamsTypeFromDeleteStatement", () => {
   test("DELETE FROM users WHERE id = ? AND name = ?", () => {
-    type Result = InferParamsTypeFromDeleteStatement<"DELETE FROM users WHERE id = ? AND name = ?", TestTables>;
+    type Result = InferParamsTypeFromDeleteStatement<"DELETE FROM users WHERE id = ? AND name = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
 
   // describe("should support lowercase", () => {
   test("delete from users where id = ? and name = ?", () => {
-    type Result = InferParamsTypeFromDeleteStatement<"delete from users where id = ? and name = ?", TestTables>;
+    type Result = InferParamsTypeFromDeleteStatement<"delete from users where id = ? and name = ?", DB>;
     expectTypeOf<Result>().toEqualTypeOf<[number, string]>();
   });
   // });
